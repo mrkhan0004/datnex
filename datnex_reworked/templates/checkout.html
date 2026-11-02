@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+{% block title %}Checkout — Configure Your GST Database Package{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:680px">
+  <div class="sec">
+    <span class="kicker">Order Configuration</span>
+    <h2>Select Your Target Geography</h2>
+  </div>
+
+  <!-- WhatsApp Help Pill -->
+  <div style="background:#eafaf1;border:1px solid #b7ecd0;padding:12px 18px;border-radius:12px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <span style="font-size:13px;color:#137333;font-weight:600">
+      Need quick help choosing your State or District package?
+    </span>
+    <a href="{{ whatsapp_url('Hi datnex, I am on the checkout page and need help selecting a package.') }}" target="_blank" rel="noopener noreferrer" style="color:#11835b;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:5px">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="15" height="15"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Support →
+    </a>
+  </div>
+
+  <form method="POST" class="card" style="padding:28px">
+    <label style="font-weight:750;font-size:14px">1. Package Type</label>
+    <div style="display:grid;grid-template-columns:1fr;gap:10px;margin:8px 0 20px">
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #d5e0ed;border-radius:10px;cursor:pointer;background:#fbfdff">
+        <input type="radio" name="ptype" value="pan_india" checked style="width:auto;margin:0">
+        <div>
+          <b>Pan India Package — ₹{{ '{:,}'.format(PAN) }} <s style="color:#94a3b8;font-weight:normal">₹59,999</s> <span style="color:#15966a;font-weight:800;font-size:11px">90% OFF</span></b>
+          <small style="display:block;color:var(--muted)">All 36 States &amp; 780+ Districts included in one nationwide download</small>
+        </div>
+      </label>
+
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #d5e0ed;border-radius:10px;cursor:pointer;background:#fbfdff">
+        <input type="radio" name="ptype" value="state" style="width:auto;margin:0">
+        <div>
+          <b>State-wise Package — ₹999 <s style="color:#94a3b8;font-weight:normal">₹9,999</s> <span style="color:#15966a;font-weight:800;font-size:11px">90% OFF</span></b>
+          <small style="display:block;color:var(--muted)">Select any 1 State — all constituent districts included</small>
+        </div>
+      </label>
+
+      <label style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #d5e0ed;border-radius:10px;cursor:pointer;background:#fbfdff">
+        <input type="radio" name="ptype" value="city" style="width:auto;margin:0">
+        <div>
+          <b>District / City Package — ₹599 <s style="color:#94a3b8;font-weight:normal">₹5,999</s> <span style="color:#15966a;font-weight:800;font-size:11px">90% OFF</span></b>
+          <small style="display:block;color:var(--muted)">Select any 1 District from 780+ Indian districts</small>
+        </div>
+      </label>
+    </div>
+
+    <div id="stateGroup">
+      <label style="font-weight:750">2. Select State (Choose from 36 States &amp; UTs)</label>
+      <select name="state_id" id="stateSel">
+        <option value="">— Select State or Union Territory —</option>
+      </select>
+    </div>
+
+    <div id="cityGroup">
+      <label style="font-weight:750">3. Select District (Choose from 780+ Districts)</label>
+      <select name="city_id" id="citySel">
+        <option value="">— Select State First —</option>
+      </select>
+    </div>
+
+    <label style="font-weight:750">Industry / Segment Filter (Optional, +₹{{ ADDON }})</label>
+    <select name="category_id">
+      <option value="">— All Industries &amp; Categories —</option>
+      {% for c in cats %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+    </select>
+
+    <div style="border-top:1px solid #edf2f7;margin-top:20px;padding-top:16px">
+      <label style="font-weight:750">Your Contact Details</label>
+      <label>Full Name</label>
+      <input name="name" placeholder="e.g. Ramesh Kumar" required>
+
+      <label>Email Address (Download link will also be verified here)</label>
+      <input type="email" name="email" placeholder="name@company.com" required>
+
+      <label>WhatsApp Number (For instant payment verification &amp; support)</label>
+      <input name="phone" placeholder="e.g. 9876543210" required>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:22px;margin-top:10px">
+      <div>
+        <small style="color:var(--muted);text-transform:uppercase;font-size:10px;letter-spacing:1px;font-weight:800">Total Payable</small>
+        <div class="price" id="amount" style="margin:2px 0 0">₹{{ '{:,}'.format(PAN) }}</div>
+      </div>
+      <button class="btn primary" style="padding:14px 28px;font-size:14px">Continue to UPI Payment →</button>
+    </div>
+  </form>
+</div>
+
+<script>
+const TREE = {{ tree|tojson }}, PAN = {{ PAN }}, ADDON = {{ ADDON }};
+const stateSel = document.getElementById('stateSel'), citySel = document.getElementById('citySel');
+const catSel = document.querySelector('select[name=category_id]');
+const stateGroup = document.getElementById('stateGroup');
+const cityGroup = document.getElementById('cityGroup');
+
+// Populate all 36 States
+TREE.forEach(s => stateSel.append(new Option(s.name + ' (' + s.cities.length + ' Districts) — ₹' + s.price.toLocaleString('en-IN'), s.id)));
+
+function calc(){
+  const t = document.querySelector('input[name=ptype]:checked').value;
+  let amt = PAN;
+  
+  if (t === 'pan_india') {
+    stateGroup.style.opacity = '0.5';
+    cityGroup.style.opacity = '0.5';
+  } else if (t === 'state') {
+    stateGroup.style.opacity = '1';
+    cityGroup.style.opacity = '0.5';
+    if (stateSel.value) {
+      const s = TREE.find(x => x.id == stateSel.value);
+      amt = s ? s.price : 999;
+    } else {
+      amt = 999;
+    }
+  } else if (t === 'city') {
+    stateGroup.style.opacity = '1';
+    cityGroup.style.opacity = '1';
+    if (citySel.value && stateSel.value) {
+      const s = TREE.find(x => x.id == stateSel.value);
+      const c = s && s.cities.find(y => y.id == citySel.value);
+      amt = c ? c.price : 599;
+    } else {
+      amt = 599;
+    }
+  }
+
+  if (catSel.value) amt += ADDON;
+  document.getElementById('amount').textContent = '₹' + amt.toLocaleString('en-IN');
+}
+
+stateSel.addEventListener('change', () => {
+  citySel.innerHTML = '<option value="">— Select District —</option>';
+  const s = TREE.find(x => x.id == stateSel.value);
+  (s ? s.cities : []).forEach(c => citySel.append(new Option(c.name + ' — ₹' + c.price.toLocaleString('en-IN'), c.id)));
+  calc();
+});
+
+document.querySelectorAll('input[name=ptype], select').forEach(el => el.addEventListener('change', calc));
+
+// Handle URL query parameters
+const q = new URLSearchParams(location.search);
+if (q.get('ptype')) {
+  const r = document.querySelector(`input[name=ptype][value="${q.get('ptype')}"]`);
+  if (r) r.checked = true;
+}
+if (q.get('state')) {
+  stateSel.value = q.get('state');
+  stateSel.dispatchEvent(new Event('change'));
+}
+if (q.get('city')) {
+  citySel.value = q.get('city');
+}
+calc();
+</script>
+{% endblock %}

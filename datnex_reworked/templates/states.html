@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+{% block title %}All 36 States & 780+ Districts — India GST Business Database{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="breadcrumb"><a href="/">Home</a> / <span>GST Database Directory</span></div>
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:20px;margin-bottom:30px">
+    <div>
+      <span class="kicker">PAN-INDIA GST DIRECTORY</span>
+      <h1 style="margin-bottom:8px">All <span class="grad">36 States</span> &amp; <span class="grad">780+ Districts</span></h1>
+      <p class="sub">Comprehensive verified B2B GST data directory covering all 28 States, 8 Union Territories, and 780+ official districts in India.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I am looking for custom state/district data package.') }}" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-2px;margin-right:4px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Inquiry
+      </a>
+      <a class="btn" href="/checkout?ptype=pan_india">Pan-India Package (₹5,999 · 90% OFF) →</a>
+    </div>
+  </div>
+
+  <!-- Search & Tab Bar -->
+  <div class="card" style="margin-bottom:28px;padding:20px 24px;border:1px solid #c9e0fa;background:#f9fbfe">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button id="tabStatesBtn" type="button" class="btn primary small" onclick="switchTab('states')">
+          🇮🇳 States &amp; UTs ({{ nstates }})
+        </button>
+        <button id="tabDistrictsBtn" type="button" class="btn small" onclick="switchTab('districts')">
+          🏙️ Districts &amp; Cities ({{ ncities }}+)
+        </button>
+      </div>
+      <div style="flex:1;min-width:280px;max-width:440px">
+        <input type="text" id="dirSearchInput" placeholder="🔍 Filter states or districts by name..." style="margin:0;padding:10px 14px;border-radius:10px">
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 1: STATES & UTS (36) -->
+  <div id="statesView">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0;font-size:18px">All 36 Indian States &amp; Union Territories</h3>
+      <span style="font-size:12px;color:var(--muted)">Sorted alphabetically · Click any state to see all its districts</span>
+    </div>
+    <div class="grid g4" id="statesGrid">
+      {% for s in states %}
+      <a class="card state-card" href="/gst-database/{{ s.slug }}" data-name="{{ s.name|lower }}" style="display:flex;flex-direction:column;justify-content:space-between;padding:20px;transition:all .22s">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:10px;font-weight:800;letter-spacing:1px;color:var(--blue);text-transform:uppercase">STATE PACKAGE</span>
+            <span style="font-size:11px;background:#eef6ff;color:var(--blue);padding:3px 8px;border-radius:99px;font-weight:700">{{ s.district_count or 0 }} Districts</span>
+          </div>
+          <b style="font-size:16px;color:var(--navy);display:block;margin-bottom:4px">{{ s.name }}</b>
+          <small style="color:var(--muted);display:block">{{ '{:,}'.format(s.total_leads) }} verified leads</small>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:12px;border-top:1px solid #edf2f8">
+          <span style="font-size:13px;font-weight:850;color:var(--navy)">₹{{ '{:,}'.format(s.price) }} <s style="font-size:11px;color:#9aa7b7;font-weight:normal">₹9,999</s></span>
+          <span style="font-size:12px;color:var(--blue);font-weight:750">Explore →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- VIEW 2: DISTRICTS & CITIES (780+) -->
+  <div id="districtsView" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h3 style="margin:0;font-size:18px">All 780+ Indian Districts &amp; Cities</h3>
+      <span style="font-size:12px;color:var(--muted)">Individual district packages at ₹599</span>
+    </div>
+    <div class="grid g4" id="districtsGrid">
+      {% for c in cities %}
+      <a class="card district-card" href="/gst-database/{{ c.sslug }}/{{ c.slug }}" data-name="{{ c.name|lower }} {{ c.sname|lower }}" style="padding:18px;display:flex;flex-direction:column;justify-content:space-between">
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:9px;font-weight:800;letter-spacing:1px;color:#0e9f6e;text-transform:uppercase">DISTRICT</span>
+            <span style="font-size:10px;color:var(--muted)">{{ c.sname }}</span>
+          </div>
+          <b style="font-size:15px;color:var(--navy);display:block">{{ c.name }}</b>
+          <small style="color:var(--muted)">{{ '{:,}'.format(c.total_leads) }} leads</small>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:10px;border-top:1px solid #edf2f8">
+          <span style="font-size:13px;font-weight:850;color:var(--navy)">₹{{ '{:,}'.format(c.price) }}</span>
+          <span style="font-size:11px;color:var(--blue);font-weight:750">View →</span>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Instant WhatsApp Assistance Banner -->
+  <div class="card" style="margin-top:40px;background:linear-gradient(135deg,#0b2545,#123e70);color:#fff;border-radius:18px;padding:32px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+      <div>
+        <span class="eyebrow" style="color:#25D366">Direct Support</span>
+        <h3 style="color:#fff;font-size:22px;margin:6px 0">Need multi-district bundles or custom state extracts?</h3>
+        <p style="color:#d5e5f8;font-size:14px;margin:0">Our team can assemble custom filtered GST databases matching your exact industry, turnover, and city requirements.</p>
+      </div>
+      <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I need a custom bundle of states and districts.') }}" target="_blank" rel="noopener noreferrer" style="font-size:14px;padding:14px 22px">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="vertical-align:-3px;margin-right:6px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Us: {{ whatsapp_display }}
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchTab(tab) {
+  const statesView = document.getElementById('statesView');
+  const districtsView = document.getElementById('districtsView');
+  const tabStatesBtn = document.getElementById('tabStatesBtn');
+  const tabDistrictsBtn = document.getElementById('tabDistrictsBtn');
+
+  if (tab === 'districts') {
+    statesView.style.display = 'none';
+    districtsView.style.display = 'block';
+    tabDistrictsBtn.classList.add('primary');
+    tabStatesBtn.classList.remove('primary');
+    location.hash = 'districts';
+  } else {
+    statesView.style.display = 'block';
+    districtsView.style.display = 'none';
+    tabStatesBtn.classList.add('primary');
+    tabDistrictsBtn.classList.remove('primary');
+    location.hash = 'states';
+  }
+}
+
+// Check URL hash
+if (location.hash === '#districts') {
+  switchTab('districts');
+}
+
+// Live filter
+const searchInput = document.getElementById('dirSearchInput');
+searchInput.addEventListener('input', (e) => {
+  const q = e.target.value.trim().toLowerCase();
+  
+  // Filter states
+  document.querySelectorAll('.state-card').forEach(el => {
+    const name = el.getAttribute('data-name') || '';
+    el.style.display = name.includes(q) ? '' : 'none';
+  });
+
+  // Filter districts
+  document.querySelectorAll('.district-card').forEach(el => {
+    const name = el.getAttribute('data-name') || '';
+    el.style.display = name.includes(q) ? '' : 'none';
+  });
+});
+</script>
+{% endblock %}

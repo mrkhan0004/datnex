@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}{{ p.title }}{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:760px">
+  <h1>{{ p.title }}</h1>
+  <p class="sub">{{ p.excerpt }}</p>
+  <div class="card" style="margin-top:30px;line-height:1.9">
+    {% for para in p.body.split('\n\n') %}<p style="margin-bottom:16px">{{ para }}</p>{% endfor %}
+  </div>
+</div>
+{% endblock %}

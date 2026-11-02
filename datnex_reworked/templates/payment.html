@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Pay for Order {{ o.order_id }} — datnex{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:540px">
+  <div class="sec">
+    <span class="kicker">Step 2 — UPI Payment</span>
+    <h2>Complete Your Payment</h2>
+  </div>
+
+  <div class="card" style="text-align:center;padding:32px 24px">
+    <span style="font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:750">Order Reference</span>
+    <b style="font-size:22px;color:var(--navy);display:block;margin:4px 0 12px">{{ o.order_id }}</b>
+    
+    <div class="price" style="margin:0 0 16px">₹{{ '{:,}'.format(o.amount) }}</div>
+
+    <div style="background:#f8fbfe;border:2px dashed #cfe0f5;border-radius:16px;padding:20px;display:inline-block;margin-bottom:14px">
+      <img src="{{ qr_image_url or ('/static/qr/' + o.order_id + '.png') }}" alt="UPI QR Code" style="width:230px;height:230px;border-radius:10px;display:block;margin:0 auto;object-fit:contain">
+      <small style="color:var(--muted);display:block;margin-top:8px">Scan with GPay, PhonePe, Paytm, or BHIM</small>
+    </div>
+
+    <div style="background:#f0f6ff;border:1px solid #cce0ff;border-radius:10px;padding:12px;margin-bottom:20px;font-size:13px">
+      Pay manually to UPI ID: <b style="color:var(--navy);font-family:monospace;font-size:14px">{{ upi }}</b><br>
+      <span style="color:var(--muted);font-size:12px">Account Name: <b>{{ upi_name }}</b></span>
+    </div>
+
+    <!-- WhatsApp Instant Verification Option -->
+    <div style="margin-bottom:24px">
+      <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I have initiated payment for Order ' + o.order_id + ' (Amount: ₹' + '{:,}'.format(o.amount) + '). Please verify and unlock my download token.') }}" target="_blank" rel="noopener noreferrer" style="width:100%;font-size:14px;padding:13px">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18" style="vertical-align:-3px;margin-right:6px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Share Payment Screenshot on WhatsApp
+      </a>
+      <small style="color:var(--muted);display:block;margin-top:6px;font-size:11px">Recommended for fastest verification &amp; instant unlock</small>
+    </div>
+
+    <form method="POST" action="/pay/{{ o.order_id }}/utr" style="border-top:1px solid #edf2f7;padding-top:18px;text-align:left">
+      <label style="font-weight:750">Or Enter 12-digit UPI UTR / Transaction ID</label>
+      <input name="utr" placeholder="e.g. 402312345678" style="margin-bottom:12px" required>
+      <button class="btn primary" style="width:100%">Submit UTR for Verification →</button>
+    </form>
+
+    <p style="margin-top:18px;color:var(--muted);font-size:12px">
+      Order status link: <a href="/order/{{ o.order_id }}" style="color:var(--blue);font-weight:700">/order/{{ o.order_id }}</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

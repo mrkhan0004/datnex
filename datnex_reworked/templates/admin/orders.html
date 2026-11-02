@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% block title %}Manage Orders — datnex Admin{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:1200px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+    <div>
+      <span class="kicker">Admin Portal</span>
+      <h1 style="margin:4px 0 0">All <span class="grad">Orders</span></h1>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn small" href="/admin">Dashboard</a>
+      <a class="btn small" href="/admin/upload">Upload CSV</a>
+      <a class="btn small primary" href="/admin/orders">Orders</a>
+      <a class="btn small" href="/admin/locations">Locations</a>
+      <a class="btn small" href="/admin/settings">⚙️ Settings</a>
+      <a class="btn small" href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Status summary cards -->
+  <div class="grid g4" style="margin:20px 0 24px">
+    {% set ns = namespace(pending=0, submitted=0, verified=0, rejected=0) %}
+    {% for o in orders %}
+      {% if o.status == 'verified' %}{% set ns.verified = ns.verified + 1 %}
+      {% elif o.status == 'submitted' %}{% set ns.submitted = ns.submitted + 1 %}
+      {% elif o.status == 'rejected' %}{% set ns.rejected = ns.rejected + 1 %}
+      {% else %}{% set ns.pending = ns.pending + 1 %}{% endif %}
+    {% endfor %}
+    <div class="card" style="padding:16px 20px">
+      <small style="text-transform:uppercase;font-size:11px;font-weight:750;color:var(--muted)">Total Orders</small>
+      <div style="font-size:26px;font-weight:850;color:var(--navy)">{{ orders|length }}</div>
+    </div>
+    <div class="card" style="padding:16px 20px;border-color:#bbf7d0;background:#f0fdf4">
+      <small style="text-transform:uppercase;font-size:11px;font-weight:750;color:#15803d">✓ Verified</small>
+      <div style="font-size:26px;font-weight:850;color:#15803d">{{ ns.verified }}</div>
+    </div>
+    <div class="card" style="padding:16px 20px;border-color:#fed7aa;background:#fffbeb">
+      <small style="text-transform:uppercase;font-size:11px;font-weight:750;color:#b45309">📩 Submitted (Review)</small>
+      <div style="font-size:26px;font-weight:850;color:#b45309">{{ ns.submitted }}</div>
+    </div>
+    <div class="card" style="padding:16px 20px;border-color:#e2e8f0">
+      <small style="text-transform:uppercase;font-size:11px;font-weight:750;color:#64748b">⏳ Pending / Unpaid</small>
+      <div style="font-size:26px;font-weight:850;color:#475569">{{ ns.pending }}</div>
+    </div>
+  </div>
+
+  <!-- Live Filter / Search Bar -->
+  <div class="card" style="padding:14px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;background:#f8fbfe">
+    <div style="display:flex;align-items:center;gap:10px;flex:1;min-width:260px">
+      <span style="font-size:18px">🔍</span>
+      <input type="text" id="orderSearch" placeholder="Search by Order ID, Buyer Name, Email, Phone number, or UTR..." style="margin:0;padding:9px 14px;border-radius:8px;border:1px solid #cbd5e1;font-size:13px;width:100%">
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <span style="font-size:12px;color:var(--muted);font-weight:700">Filter:</span>
+      <button type="button" class="pill" onclick="filterStatus('all')" style="cursor:pointer;font-size:11px;padding:5px 12px">All</button>
+      <button type="button" class="pill" onclick="filterStatus('submitted')" style="cursor:pointer;font-size:11px;padding:5px 12px;background:#fef3c7;border-color:#fde68a;color:#92400e">Submitted</button>
+      <button type="button" class="pill" onclick="filterStatus('verified')" style="cursor:pointer;font-size:11px;padding:5px 12px;background:#dcfce7;border-color:#bbf7d0;color:#166534">Verified</button>
+      <button type="button" class="pill" onclick="filterStatus('pending')" style="cursor:pointer;font-size:11px;padding:5px 12px;background:#f1f5f9;border-color:#e2e8f0;color:#475569">Pending</button>
+      {% if orders %}
+      <form method="POST" action="/admin/orders/clear-all" onsubmit="return confirm('Pakka sare test orders delete karne hain? Ye action undo nahi ho sakta.')" style="margin:0;display:inline-block">
+        <button type="submit" class="btn small" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;padding:5px 11px;font-size:11px;min-height:30px">
+          🗑️ Clear All Orders
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+
+  <div style="overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 6px 20px rgba(11,37,69,.04)">
+    <table id="ordersTable" style="margin:0;width:100%;min-width:980px">
+      <thead>
+        <tr style="background:#f8fbff">
+          <th style="padding:14px 16px">Order</th>
+          <th style="padding:14px 16px">Package</th>
+          <th style="padding:14px 16px">Buyer Details &amp; Phone</th>
+          <th style="padding:14px 16px">Amount</th>
+          <th style="padding:14px 16px">UTR / Txn ID (Editable)</th>
+          <th style="padding:14px 16px">Status (Editable)</th>
+          <th style="padding:14px 16px;text-align:right">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for o in orders %}
+        <tr class="order-row" data-status="{{ o.status }}" data-search="{{ o.order_id|lower }} {{ o.buyer_name|lower }} {{ o.buyer_email|lower }} {{ (o.buyer_phone or '')|lower }} {{ (o.utr_number or '')|lower }}">
+          <!-- Order ID & Date -->
+          <td style="padding:14px 16px;vertical-align:top">
+            <b style="font-family:monospace;font-size:13px;color:var(--navy)">{{ o.order_id }}</b>
+            <small style="display:block;color:var(--muted);font-size:11px;margin-top:3px">
+              {{ o.created_at[:16] if o.created_at else '' }}
+            </small>
+            <a href="/order/{{ o.order_id }}" target="_blank" style="font-size:10px;color:var(--blue);font-weight:700;display:inline-block;margin-top:2px">View Status Page ↗</a>
+          </td>
+
+          <!-- Package -->
+          <td style="padding:14px 16px;vertical-align:top">
+            <span style="font-weight:750;font-size:13px">{{ o.package_type|replace('_', ' ')|title }}</span>
+            <small style="display:block;color:var(--muted);font-size:11px;margin-top:2px">
+              {% if o.sname %}📍 {{ o.sname }}{% endif %}
+              {% if o.cname %} · {{ o.cname }}{% endif %}
+            </small>
+          </td>
+
+          <!-- Buyer (Name, Email & Client Phone Number) -->
+          <td style="padding:14px 16px;vertical-align:top">
+            <b style="color:var(--navy);font-size:13px">{{ o.buyer_name }}</b>
+            <small style="display:block;color:var(--muted);font-size:11px;overflow-wrap:anywhere">{{ o.buyer_email }}</small>
+            
+            <!-- CLIENT PHONE NUMBER FOR ENROLLMENT -->
+            <div style="margin-top:6px;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+              <span style="display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:800;color:#0f5132;background:#eaf8f1;padding:3px 8px;border-radius:6px;border:1px solid #b7ecd0">
+                📱 {{ o.buyer_phone or 'No phone' }}
+              </span>
+              {% if o.buyer_phone %}
+              <a href="https://wa.me/{{ o.buyer_phone|replace('+','')|replace(' ','')|replace('-','') }}"
+                 target="_blank" rel="noopener noreferrer"
+                 style="display:inline-flex;align-items:center;gap:3px;background:#25D366;color:#fff;font-size:11px;font-weight:750;padding:3px 8px;border-radius:6px;text-decoration:none"
+                 title="Enroll / Chat with client on WhatsApp">
+                💬 WhatsApp
+              </a>
+              <a href="tel:{{ o.buyer_phone }}"
+                 style="display:inline-flex;align-items:center;gap:2px;background:#f0f6ff;color:var(--blue);border:1px solid #cce0ff;font-size:11px;font-weight:750;padding:3px 7px;border-radius:6px;text-decoration:none"
+                 title="Call buyer">
+                📞 Call
+              </a>
+              {% endif %}
+            </div>
+          </td>
+
+          <!-- Amount -->
+          <td style="padding:14px 16px;vertical-align:top">
+            <b style="font-size:15px;color:var(--navy)">₹{{ '{:,}'.format(o.amount) }}</b>
+          </td>
+
+          <!-- EDITABLE ROW FORM (UTR + STATUS) -->
+          <td colspan="3" style="padding:0">
+            <form method="POST" action="/admin/orders/{{ o.id }}/update" style="margin:0;display:flex;align-items:center;width:100%;height:100%">
+              <!-- UTR Input (Editable) -->
+              <div style="padding:14px 16px;width:210px;flex-shrink:0;vertical-align:top">
+                <input type="text" name="utr" value="{{ o.utr_number or '' }}"
+                       placeholder="Enter / Edit UTR"
+                       style="margin:0;padding:7px 10px;font-size:12px;font-family:monospace;width:100%;border-radius:7px;border:1.5px solid {% if o.utr_number %}#93c5fd{% else %}#e2e8f0{% endif %};background:{% if o.utr_number %}#f0f7ff{% else %}#fff{% endif %};font-weight:600">
+                {% if o.utr_number %}
+                <small style="color:#2563eb;font-size:10px;display:block;margin-top:3px">Saved UTR</small>
+                {% else %}
+                <small style="color:#94a3b8;font-size:10px;display:block;margin-top:3px">No UTR submitted yet</small>
+                {% endif %}
+              </div>
+
+              <!-- Status Dropdown (Editable) -->
+              <div style="padding:14px 16px;width:170px;flex-shrink:0;vertical-align:top">
+                <select name="status" style="margin:0;padding:7px 10px;font-size:12px;border-radius:7px;font-weight:750;width:100%;background:#fff;border:1.5px solid {% if o.status == 'verified' %}#86efac{% elif o.status == 'submitted' %}#fde047{% elif o.status == 'rejected' %}#fca5a5{% else %}#cbd5e1{% endif %}">
+                  <option value="pending" {% if o.status == 'pending' %}selected{% endif %}>⏳ Pending</option>
+                  <option value="submitted" {% if o.status == 'submitted' %}selected{% endif %}>📩 Submitted</option>
+                  <option value="verified" {% if o.status == 'verified' %}selected{% endif %}>✓ Verified</option>
+                  <option value="rejected" {% if o.status == 'rejected' %}selected{% endif %}>✗ Rejected</option>
+                </select>
+                <div style="margin-top:3px">
+                  <span class="status st-{{ o.status }}" style="font-size:10px;padding:2px 8px">{{ o.status }}</span>
+                </div>
+              </div>
+
+              <!-- Actions & Quick Buttons -->
+              <div style="padding:14px 16px;flex:1;text-align:right;display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap">
+                <!-- Save Button (Saves UTR and Status) -->
+                <button type="submit" class="btn primary small" style="padding:6px 12px;font-size:12px;min-height:32px" title="Save changes to UTR and Status">
+                  💾 Save
+                </button>
+
+                <!-- Quick 1-click status actions -->
+                {% if o.status != 'verified' %}
+                <button type="button" onclick="quickAction({{ o.id }}, 'verify')" class="btn small" style="padding:6px 10px;font-size:11px;min-height:32px;background:#eaf8f1;color:#0f5132;border-color:#b7ecd0" title="1-click Verify and Unlock Download">
+                  ✓ Verify
+                </button>
+                {% endif %}
+
+                {% if o.status != 'rejected' %}
+                <button type="button" onclick="quickAction({{ o.id }}, 'reject')" class="btn small" style="padding:6px 9px;font-size:11px;min-height:32px;background:#fef2f2;color:#991b1b;border-color:#fecaca" title="Mark Rejected">
+                  ✗ Reject
+                </button>
+                {% endif %}
+
+                {% if o.utr_number %}
+                <button type="button" onclick="clearUtr(this)" class="btn small" style="padding:6px 8px;font-size:11px;min-height:32px;background:#f8fafc;color:#64748b" title="Clear UTR text field">
+                  Clear
+                </button>
+                {% endif %}
+
+                <!-- Delete Single Order -->
+                <button type="button" onclick="if(confirm('Delete order #{{ o.order_id }}?')) quickAction({{ o.id }}, 'delete')" class="btn small" style="padding:6px 9px;font-size:11px;min-height:32px;background:#fee2e2;color:#b91c1c;border-color:#fca5a5" title="Delete this order">
+                  🗑️
+                </button>
+
+                {% if o.status == 'verified' %}
+                <div style="display:block;margin-left:4px;text-align:right">
+                  <span style="font-size:11px;color:#15803d;font-weight:750;display:block">D/L: {{ o.download_count }}/5x</span>
+                  {% if o.download_token %}
+                  <a href="/download/{{ o.download_token }}" target="_blank" style="font-size:10px;color:var(--blue);text-decoration:underline">Test CSV Link</a>
+                  {% endif %}
+                </div>
+                {% endif %}
+              </div>
+            </form>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted)">No orders placed yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Hidden form for 1-click quick actions -->
+<form id="actionForm" method="POST" style="display:none"></form>
+
+<script>
+function quickAction(oid, act) {
+  const form = document.getElementById('actionForm');
+  form.action = '/admin/orders/' + oid + '/' + act;
+  form.submit();
+}
+
+function clearUtr(btn) {
+  const tr = btn.closest('tr');
+  const input = tr.querySelector('input[name=utr]');
+  if (input) {
+    input.value = '';
+    input.focus();
+    input.style.borderColor = '#f59e0b';
+  }
+}
+
+// Client-side search and status filter
+const searchInput = document.getElementById('orderSearch');
+const rows = document.querySelectorAll('.order-row');
+
+function applyFilters() {
+  const q = searchInput.value.toLowerCase().trim();
+  const currentStatus = window.activeStatus || 'all';
+
+  rows.forEach(r => {
+    const text = r.getAttribute('data-search') || '';
+    const st = r.getAttribute('data-status') || '';
+    const matchesQuery = !q || text.includes(q);
+    const matchesStatus = currentStatus === 'all' || st === currentStatus;
+    r.style.display = (matchesQuery && matchesStatus) ? '' : 'none';
+  });
+}
+
+if (searchInput) searchInput.addEventListener('input', applyFilters);
+
+function filterStatus(st) {
+  window.activeStatus = st;
+  applyFilters();
+}
+</script>
+{% endblock %}

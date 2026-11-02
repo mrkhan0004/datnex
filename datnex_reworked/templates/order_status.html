@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block title %}Order Status — {{ o.order_id }}{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:580px;text-align:center">
+  <span class="kicker">Live Order Status</span>
+  <h1 style="margin-bottom:12px">Order <span class="grad">{{ o.order_id }}</span></h1>
+
+  <div class="card" style="padding:32px 24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:14px;border-bottom:1px solid #edf2f8;margin-bottom:18px">
+      <span style="font-size:13px;color:var(--muted)">Package: <b>{{ o.package_type|replace('_', ' ')|title }}</b></span>
+      <span style="font-size:18px;font-weight:850;color:var(--navy)">₹{{ '{:,}'.format(o.amount) }}</span>
+    </div>
+
+    <p style="margin:12px 0 18px">
+      Status: <span class="status st-{{ o.status }}" style="font-size:13px;padding:6px 16px;text-transform:uppercase">{{ o.status }}</span>
+    </p>
+
+    {% if o.status == 'verified' %}
+      <div style="background:#eaf8f1;border:1px solid #b2e6cb;border-radius:14px;padding:22px;margin:18px 0">
+        <h3 style="color:#0f5132;margin-bottom:8px">Payment Verified Successfully!</h3>
+        <p style="color:#198754;font-size:13px;margin-bottom:16px">Your database package is ready to download.</p>
+        <a class="btn primary" style="width:100%;font-size:15px;padding:14px" href="/download/{{ o.download_token }}">
+          ⬇ Download Your Database (CSV)
+        </a>
+        <p style="margin-top:10px;color:var(--muted);font-size:12px">
+          Downloads used: <b>{{ o.download_count }}/5</b>
+        </p>
+      </div>
+
+    {% elif o.status == 'submitted' %}
+      <div style="background:#f0f6ff;border:1px solid #cce0ff;border-radius:14px;padding:22px;margin:18px 0">
+        <h3 style="color:var(--navy);margin-bottom:8px">Payment Submitted (Under Verification)</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px">
+          UTR submitted: <b>{{ o.utr_number or 'In Review' }}</b>. Verification usually takes 5-15 minutes.
+        </p>
+        <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I have submitted UTR ' + (o.utr_number or '') + ' for Order ' + o.order_id + '. Please unlock my download.') }}" target="_blank" rel="noopener noreferrer" style="width:100%;padding:13px">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-2px;margin-right:5px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Speed Up on WhatsApp (Instant Unlock)
+        </a>
+      </div>
+
+    {% elif o.status == 'rejected' %}
+      <div style="background:#fff3f3;border:1px solid #fecaca;border-radius:14px;padding:22px;margin:18px 0">
+        <h3 style="color:#b91c1c;margin-bottom:8px">Verification Issue</h3>
+        <p style="color:#dc2626;font-size:13px;margin-bottom:16px">
+          Payment UTR could not be verified automatically. Please chat with our WhatsApp support to resolve this immediately.
+        </p>
+        <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, my order ' + o.order_id + ' status is rejected. Please help verify my payment.') }}" target="_blank" rel="noopener noreferrer" style="width:100%">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-2px;margin-right:5px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Resolve on WhatsApp ({{ whatsapp_display }})
+        </a>
+      </div>
+
+    {% else %}
+      <div style="margin:20px 0">
+        <p style="color:var(--muted);font-size:13px;margin-bottom:14px">Your payment has not been received yet.</p>
+        <a class="btn primary" href="/pay/{{ o.order_id }}" style="width:100%;padding:13px">Go to Payment Page →</a>
+      </div>
+    {% endif %}
+
+    <div style="border-top:1px solid #edf2f7;padding-top:16px;margin-top:20px">
+      <small style="color:var(--muted)">Need help with this order? <a href="{{ whatsapp_url('Hi, I need support for order ' + o.order_id) }}" target="_blank" style="color:var(--blue);font-weight:700">Chat with support on WhatsApp →</a></small>
+    </div>
+  </div>
+</div>
+{% endblock %}

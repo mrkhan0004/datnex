@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrap">
+  <div class="sec"><span class="kicker">Guides</span><h2>From the Blog</h2></div>
+  <div class="grid g3">
+    {% for p in posts %}
+    <a class="card" href="/blog/{{ p.slug }}"><h3>{{ p.title }}</h3><p>{{ p.excerpt }}</p>
+      <small style="color:var(--blue2)">Read guide →</small></a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrap" style="max-width:760px">
+  <h1>Blog <span class="grad">Posts</span></h1>
+  <form method="POST" class="card" style="margin-top:24px">
+    <label>Title</label><input name="title" required>
+    <label>Excerpt</label><input name="excerpt" required>
+    <label>Body (double enter = new paragraph)</label>
+    <textarea name="body" rows="8" required></textarea>
+    <button class="btn primary">Publish</button>
+  </form>
+  <table style="margin-top:30px"><tr><th>Post</th></tr>
+    {% for p in posts %}<tr><td><a href="/blog/{{ p.slug }}" style="color:var(--blue2)">{{ p.title }}</a></td></tr>{% endfor %}</table>
+</div>
+{% endblock %}

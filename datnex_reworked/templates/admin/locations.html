@@ -1,0 +1,377 @@
+{% extends 'base.html' %}
+{% block title %}Locations & Leads Manager — datnex Admin{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:1100px">
+
+  <!-- Header -->
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px">
+    <div>
+      <span class="kicker">Admin Management</span>
+      <h1 style="margin:4px 0 0">Locations, Leads &amp; <span class="grad">Pricing</span></h1>
+      <p class="sub" style="margin:4px 0 0;font-size:14px">Edit verified lead numbers and pricing for all {{ states|length }} Indian States/UTs and {{ total_cities }} Districts. Changes reflect immediately across the entire website.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn small" href="/admin">Dashboard</a>
+      <a class="btn small" href="/admin/orders">📦 Orders</a>
+      <a class="btn small primary" href="/admin/locations">📍 Locations</a>
+      <a class="btn small" href="/admin/upload">⬆ Upload CSV</a>
+      <a class="btn small" href="/admin/settings">⚙️ Settings</a>
+      <a class="btn small" href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <!-- Flash Messages -->
+  {% with msgs = get_flashed_messages() %}{% for m in msgs %}
+  <div style="background:#eaf7ee;border:1px solid #7cd39e;padding:12px 18px;border-radius:10px;margin-bottom:18px;font-size:13px;color:#1e6b37;display:flex;align-items:center;gap:8px">
+    ✓ {{ m }}
+  </div>
+  {% endfor %}{% endwith %}
+
+  <!-- Control & Tab Bar -->
+  <div class="card" style="padding:16px 20px;margin-bottom:24px;border:1px solid #d5e4f5;background:linear-gradient(180deg,#fff,#f8fbff)">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px">
+      <!-- Tabs -->
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button id="tabStatesBtn" type="button" class="btn small primary" onclick="switchLocTab('states')">
+          🇮🇳 States &amp; UTs ({{ states|length }})
+        </button>
+        <button id="tabDistrictsBtn" type="button" class="btn small" onclick="switchLocTab('districts')">
+          🏙️ Districts &amp; Cities ({{ total_cities }})
+        </button>
+        <button id="tabAddBtn" type="button" class="btn small" onclick="switchLocTab('add')">
+          ➕ Add New
+        </button>
+      </div>
+
+      <!-- Live Search Filter -->
+      <div style="flex:1;min-width:240px;max-width:380px">
+        <input type="text" id="locSearchInput" placeholder="🔍 Search state or district name..."
+               oninput="filterTables(this.value)"
+               style="margin:0;padding:9px 14px;border-radius:8px;font-size:13px">
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 1: ALL 36 STATES & UNION TERRITORIES -->
+  <div id="statesViewWrap">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+      <div style="font-size:13px;color:#1e40af">
+        💡 <b>How it works:</b> Edit the <b>Total Leads</b> or <b>Price</b> for any state below and click <b>💾 Save</b>.
+        It immediately updates the live state card on <a href="/gst-database" target="_blank" style="color:#1d4ed8;font-weight:700;text-decoration:underline">/gst-database</a> and the home page.
+      </div>
+      <a href="/gst-database" target="_blank" class="btn small" style="background:#fff;border-color:#bfdbfe;color:#1e40af;font-size:12px">
+        ↗ View Live State Directory
+      </a>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 6px 24px rgba(11,37,69,0.04)">
+      <table id="statesTable" style="margin:0;width:100%">
+        <thead>
+          <tr style="background:#f8fafc">
+            <th style="width:36px;text-align:center">#</th>
+            <th>State / UT Name</th>
+            <th>Districts</th>
+            <th style="min-width:180px">Verified Leads (Website Display)</th>
+            <th style="min-width:130px">Price (₹)</th>
+            <th style="text-align:right;width:160px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in states %}
+          <tr class="state-row" data-name="{{ s.name|lower }}">
+            <td style="text-align:center;color:#94a3b8;font-size:12px">{{ loop.index }}</td>
+            <td>
+              <b style="font-size:14px;color:var(--navy);display:block">{{ s.name }}</b>
+              <small style="color:#64748b;font-family:monospace;font-size:11px">/gst-database/{{ s.slug }}</small>
+            </td>
+            <td>
+              <span class="badge" style="background:#f1f5f9;color:#334155;font-size:11px;padding:3px 8px;border-radius:6px">
+                {{ s.district_count }} Districts
+              </span>
+            </td>
+            <td>
+              <form method="POST" action="/admin/locations" onsubmit="submitInline(event, this)" style="margin:0;display:flex;align-items:center;gap:6px">
+                <input type="hidden" name="action" value="update_state">
+                <input type="hidden" name="id" value="{{ s.id }}">
+                <div style="position:relative;width:100%">
+                  <input type="number" name="total_leads" value="{{ s.total_leads }}"
+                         placeholder="Leads count" required min="0"
+                         style="margin:0;padding:8px 12px;font-size:13px;font-weight:750;color:#0f172a;border:1.5px solid #cbd5e1;border-radius:8px;width:100%">
+                </div>
+            </td>
+            <td>
+                <div style="display:flex;align-items:center;background:#fff;border:1.5px solid #cbd5e1;border-radius:8px;padding:0 8px">
+                  <span style="font-size:13px;color:#64748b;font-weight:700">₹</span>
+                  <input type="number" name="price" value="{{ s.price }}"
+                         placeholder="Price" required min="1"
+                         style="margin:0;border:none;padding:8px 4px;font-size:13px;font-weight:750;color:#0f172a;width:80px;outline:none">
+                </div>
+            </td>
+            <td style="text-align:right">
+                <div style="display:inline-flex;gap:6px;align-items:center">
+                  <button type="submit" class="btn small primary" style="padding:7px 12px;font-size:12px;white-space:nowrap">
+                    💾 Save
+                  </button>
+                  <a href="/gst-database/{{ s.slug }}" target="_blank" rel="noopener noreferrer"
+                     class="btn small" style="padding:7px 9px;font-size:12px;background:#f8fafc;border-color:#d5e0ed" title="View live page">
+                    ↗ View
+                  </a>
+                </div>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 2: DISTRICTS & CITIES -->
+  <div id="districtsViewWrap" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <label style="font-size:13px;font-weight:700;color:var(--navy);margin:0">Filter by State:</label>
+        <select id="stateFilterSelect" onchange="filterDistrictsByState(this.value)" style="margin:0;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600">
+          <option value="">All States ({{ total_cities }} Districts)</option>
+          {% for s in states %}
+          <option value="{{ s.name|lower }}">{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div style="font-size:12px;color:var(--muted)">
+        Showing <span id="districtCountDisplay">{{ total_cities }}</span> districts
+      </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;border:1px solid #e2e8f0;box-shadow:0 6px 24px rgba(11,37,69,0.04)">
+      <table id="districtsTable" style="margin:0;width:100%">
+        <thead>
+          <tr style="background:#f8fafc">
+            <th style="width:36px;text-align:center">#</th>
+            <th>District / City</th>
+            <th>State</th>
+            <th style="min-width:180px">Verified Leads</th>
+            <th style="min-width:130px">Price (₹)</th>
+            <th style="text-align:right;width:160px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in cities %}
+          <tr class="district-row" data-name="{{ c.name|lower }} {{ c.sname|lower }}" data-state="{{ c.sname|lower }}">
+            <td style="text-align:center;color:#94a3b8;font-size:12px">{{ loop.index }}</td>
+            <td>
+              <b style="font-size:14px;color:var(--navy);display:block">{{ c.name }}</b>
+              <small style="color:#64748b;font-family:monospace;font-size:11px">/gst-database/{{ c.sslug }}/{{ c.slug }}</small>
+            </td>
+            <td>
+              <span class="badge" style="background:#eef6ff;color:#1e40af;font-size:11px;padding:3px 8px;border-radius:6px">
+                {{ c.sname }}
+              </span>
+            </td>
+            <td>
+              <form method="POST" action="/admin/locations" onsubmit="submitInline(event, this)" style="margin:0;display:flex;align-items:center;gap:6px">
+                <input type="hidden" name="action" value="update_city">
+                <input type="hidden" name="id" value="{{ c.id }}">
+                <input type="number" name="total_leads" value="{{ c.total_leads }}"
+                       placeholder="Leads count" required min="0"
+                       style="margin:0;padding:8px 12px;font-size:13px;font-weight:750;color:#0f172a;border:1.5px solid #cbd5e1;border-radius:8px;width:100%">
+            </td>
+            <td>
+                <div style="display:flex;align-items:center;background:#fff;border:1.5px solid #cbd5e1;border-radius:8px;padding:0 8px">
+                  <span style="font-size:13px;color:#64748b;font-weight:700">₹</span>
+                  <input type="number" name="price" value="{{ c.price }}"
+                         placeholder="Price" required min="1"
+                         style="margin:0;border:none;padding:8px 4px;font-size:13px;font-weight:750;color:#0f172a;width:80px;outline:none">
+                </div>
+            </td>
+            <td style="text-align:right">
+                <div style="display:inline-flex;gap:6px;align-items:center">
+                  <button type="submit" class="btn small primary" style="padding:7px 12px;font-size:12px;white-space:nowrap">
+                    💾 Save
+                  </button>
+                  <a href="/gst-database/{{ c.sslug }}/{{ c.slug }}" target="_blank" rel="noopener noreferrer"
+                     class="btn small" style="padding:7px 9px;font-size:12px;background:#f8fafc;border-color:#d5e0ed" title="View live page">
+                    ↗ View
+                  </a>
+                </div>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB 3: ADD NEW STATE / DISTRICT / CATEGORY -->
+  <div id="addViewWrap" style="display:none">
+    <div class="grid g3">
+      <!-- Add State -->
+      <form method="POST" action="/admin/locations" class="card" style="padding:24px">
+        <input type="hidden" name="action" value="add_state">
+        <h3 style="margin-top:0">➕ Add New State</h3>
+        <label style="font-weight:700;font-size:12px">State Name</label>
+        <input name="name" placeholder="e.g. Telangana" required style="margin-bottom:12px">
+        <label style="font-weight:700;font-size:12px">Total Leads (Display)</label>
+        <input name="total_leads" type="number" value="50000" placeholder="e.g. 50000" style="margin-bottom:12px">
+        <label style="font-weight:700;font-size:12px">Price ₹</label>
+        <input name="price" type="number" value="999" placeholder="999" style="margin-bottom:16px">
+        <button class="btn primary" style="width:100%">Add State</button>
+      </form>
+
+      <!-- Add District -->
+      <form method="POST" action="/admin/locations" class="card" style="padding:24px">
+        <input type="hidden" name="action" value="add_city">
+        <h3 style="margin-top:0">➕ Add District / City</h3>
+        <label style="font-weight:700;font-size:12px">Select State</label>
+        <select name="state_id" required style="margin-bottom:12px">
+          <option value="">— Select State —</option>
+          {% for s in states %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+        </select>
+        <label style="font-weight:700;font-size:12px">District Name</label>
+        <input name="name" placeholder="e.g. Gurugram" required style="margin-bottom:12px">
+        <label style="font-weight:700;font-size:12px">Total Leads</label>
+        <input name="total_leads" type="number" value="10000" placeholder="e.g. 10000" style="margin-bottom:12px">
+        <label style="font-weight:700;font-size:12px">Price ₹</label>
+        <input name="price" type="number" value="599" placeholder="599" style="margin-bottom:16px">
+        <button class="btn primary" style="width:100%">Add District</button>
+      </form>
+
+      <!-- Add Category -->
+      <form method="POST" action="/admin/locations" class="card" style="padding:24px">
+        <input type="hidden" name="action" value="add_cat">
+        <h3 style="margin-top:0">➕ Add Category</h3>
+        <label style="font-weight:700;font-size:12px">Category Name</label>
+        <input name="name" placeholder="e.g. Textile, Chemical, FMCG" required style="margin-bottom:16px">
+        <button class="btn primary" style="width:100%;margin-top:8px">Add Category</button>
+        <div style="margin-top:20px;border-top:1px solid #eef2f6;padding-top:12px">
+          <small style="color:var(--muted);display:block;margin-bottom:6px">Existing categories:</small>
+          <div style="display:flex;flex-wrap:wrap;gap:4px">
+            {% for c in cats %}
+            <span class="badge" style="font-size:10px">{{ c.name }}</span>
+            {% endfor %}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>
+
+<script>
+let currentTab = 'states';
+
+function switchLocTab(tab) {
+  currentTab = tab;
+  const statesWrap = document.getElementById('statesViewWrap');
+  const districtsWrap = document.getElementById('districtsViewWrap');
+  const addWrap = document.getElementById('addViewWrap');
+
+  const tabStatesBtn = document.getElementById('tabStatesBtn');
+  const tabDistrictsBtn = document.getElementById('tabDistrictsBtn');
+  const tabAddBtn = document.getElementById('tabAddBtn');
+
+  statesWrap.style.display = tab === 'states' ? 'block' : 'none';
+  districtsWrap.style.display = tab === 'districts' ? 'block' : 'none';
+  addWrap.style.display = tab === 'add' ? 'block' : 'none';
+
+  tabStatesBtn.classList.toggle('primary', tab === 'states');
+  tabDistrictsBtn.classList.toggle('primary', tab === 'districts');
+  tabAddBtn.classList.toggle('primary', tab === 'add');
+}
+
+function filterTables(query) {
+  const q = query.trim().toLowerCase();
+  
+  // Filter States
+  const stateRows = document.querySelectorAll('.state-row');
+  stateRows.forEach(row => {
+    const name = row.getAttribute('data-name') || '';
+    row.style.display = name.includes(q) ? '' : 'none';
+  });
+
+  // Filter Districts
+  const districtRows = document.querySelectorAll('.district-row');
+  let visibleCount = 0;
+  const selectedState = (document.getElementById('stateFilterSelect').value || '').trim().toLowerCase();
+  
+  districtRows.forEach(row => {
+    const name = row.getAttribute('data-name') || '';
+    const state = row.getAttribute('data-state') || '';
+    const matchesQuery = name.includes(q);
+    const matchesState = !selectedState || state === selectedState;
+    if (matchesQuery && matchesState) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  const countDisplay = document.getElementById('districtCountDisplay');
+  if (countDisplay) countDisplay.innerText = visibleCount;
+}
+
+function filterDistrictsByState(state) {
+  const q = (document.getElementById('locSearchInput').value || '').trim().toLowerCase();
+  const districtRows = document.querySelectorAll('.district-row');
+  let visibleCount = 0;
+  const st = state.trim().toLowerCase();
+
+  districtRows.forEach(row => {
+    const name = row.getAttribute('data-name') || '';
+    const rowState = row.getAttribute('data-state') || '';
+    const matchesQuery = !q || name.includes(q);
+    const matchesState = !st || rowState === st;
+    if (matchesQuery && matchesState) {
+      row.style.display = '';
+      visibleCount++;
+    } else {
+      row.style.display = 'none';
+    }
+  });
+
+  const countDisplay = document.getElementById('districtCountDisplay');
+  if (countDisplay) countDisplay.innerText = visibleCount;
+}
+
+function submitInline(e, form) {
+  e.preventDefault();
+  const btn = form.querySelector('button[type="submit"]');
+  const originalHtml = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '⏳ Saving...';
+
+  const fd = new FormData(form);
+
+  fetch(form.action || window.location.pathname, {
+    method: 'POST',
+    body: fd,
+    headers: {
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error('HTTP error ' + res.status);
+    return res.json();
+  })
+  .then(data => {
+    btn.innerHTML = '✓ Saved!';
+    btn.style.background = '#15803d';
+    btn.style.borderColor = '#15803d';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.innerHTML = originalHtml;
+      btn.style.background = '';
+      btn.style.borderColor = '';
+      btn.style.color = '';
+    }, 1400);
+  })
+  .catch(err => {
+    // Fallback to normal browser form submission
+    form.submit();
+  });
+}
+</script>
+{% endblock %}

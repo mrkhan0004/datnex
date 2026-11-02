@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}{{ loc.name }} GST Database — datnex{% endblock %}
+{% block content %}
+<div class="wrap">
+  <div class="breadcrumb">
+    <a href="/">Home</a> / <a href="/gst-database">States &amp; Districts</a>
+    {% if not is_state %} / <a href="/gst-database/{{ state.slug }}">{{ state.name }}</a>{% endif %}
+    / <span>{{ loc.name }}</span>
+  </div>
+
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:24px">
+    <div style="max-width:680px">
+      <span class="kicker">{% if is_state %}State-Wise Package · 36 States &amp; UTs{% else %}District-Wise Package · {{ state.name }}{% endif %}</span>
+      <h1>{{ loc.name }} <span class="grad">GST Database</span></h1>
+      <p class="sub">
+        Explore {{ '{:,}'.format(loc.total_leads) }}+ verified GST-registered businesses from <b>{{ loc.name }}</b>
+        {% if not is_state %}(District in {{ state.name }}){% else %}(Includes all {{ cities|length }} Districts){% endif %}
+        — company name, address, verified emails, phone numbers, owner/proprietor, and 15-digit GSTIN.
+      </p>
+
+      <div style="display:flex;gap:12px;margin-top:20px;flex-wrap:wrap">
+        <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I am interested in ' + loc.name + ' GST Database (' + ('State' if is_state else 'District in ' + state.name) + ').') }}" target="_blank" rel="noopener noreferrer">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-2px;margin-right:4px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Support for {{ loc.name }}
+        </a>
+        <a class="btn" href="/free-sample">Download Sample CSV</a>
+      </div>
+    </div>
+
+    <!-- Purchase Card -->
+    <div class="card price-card featured" style="width:min(100%,380px);margin-top:10px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="plan-label">{% if is_state %}STATE COVERAGE{% else %}DISTRICT COVERAGE{% endif %}</span>
+        <span class="badge" style="font-size:10px;padding:4px 8px">VERIFIED</span>
+      </div>
+      <h3 style="margin-top:8px">{{ loc.name }} Package</h3>
+      <small style="color:var(--muted)">{{ '{:,}'.format(loc.total_leads) }} verified business records</small>
+      <div class="price">₹{{ '{:,}'.format(loc.price) }} <s>₹{{ '{:,}'.format(9999 if is_state else 5999) }}</s></div>
+      <span class="discount-note">90% OFF · One-time payment</span>
+      <ul class="tick">
+        <li>{% if is_state %}All {{ cities|length }} constituent districts included{% else %}Dedicated records for {{ loc.name }} district{% endif %}</li>
+        <li>GSTIN, phone numbers &amp; emails</li>
+        <li>Instant verified CSV download</li>
+        <li>Excel &amp; Google Sheets compatible</li>
+        <li>Direct WhatsApp verification</li>
+      </ul>
+      {% if is_state %}
+      <a class="btn primary" style="width:100%;text-align:center"
+         href="/checkout?ptype=state&state={{ loc.id }}">Buy {{ loc.name }} Database (₹{{ '{:,}'.format(loc.price) }}) →</a>
+      {% else %}
+      <a class="btn primary" style="width:100%;text-align:center"
+         href="/checkout?ptype=city&state={{ state.id }}&city={{ loc.id }}">Buy {{ loc.name }} Database (₹{{ '{:,}'.format(loc.price) }}) →</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- IF STATE: SHOW ALL DISTRICTS IN THIS STATE -->
+  {% if is_state and cities %}
+  <div style="margin-top:60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px">
+      <div>
+        <span class="eyebrow">District-Level Coverage</span>
+        <h2 style="margin:4px 0">All Districts in {{ loc.name }} ({{ cities|length }} Districts)</h2>
+        <p class="sub" style="font-size:14px;margin:0">Buy individual district records at ₹599 each, or get the entire state above at ₹999.</p>
+      </div>
+      <input type="text" id="stateDistrictFilter" placeholder="🔍 Filter districts in {{ loc.name }}..." style="width:280px;margin:0;padding:10px 14px;border-radius:10px">
+    </div>
+
+    <div class="grid g4" id="stateDistrictsGrid">
+      {% for c in cities %}
+      <a class="card district-item" href="/gst-database/{{ loc.slug }}/{{ c.slug }}" data-name="{{ c.name|lower }}" style="padding:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:9px;font-weight:800;letter-spacing:1px;color:#0e9f6e;text-transform:uppercase">DISTRICT</span>
+          <span style="font-size:11px;color:var(--blue);font-weight:750">₹{{ '{:,}'.format(c.price) }}</span>
+        </div>
+        <b style="font-size:15px;color:var(--navy);display:block">{{ c.name }}</b>
+        <small style="color:var(--muted)">{{ '{:,}'.format(c.total_leads) }} leads ›</small>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  <script>
+  document.getElementById('stateDistrictFilter')?.addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.district-item').forEach(el => {
+      const name = el.getAttribute('data-name') || '';
+      el.style.display = name.includes(q) ? '' : 'none';
+    });
+  });
+  </script>
+  {% endif %}
+
+  <!-- IF DISTRICT: SHOW OTHER DISTRICTS IN THE SAME STATE -->
+  {% if not is_state and other_cities %}
+  <div style="margin-top:60px">
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px">
+      <div>
+        <span class="eyebrow">Explore More</span>
+        <h2 style="margin:4px 0">Other Districts in {{ state.name }}</h2>
+        <p class="sub" style="font-size:14px;margin:0">Compare records with other commercial and industrial districts across {{ state.name }}.</p>
+      </div>
+      <a class="btn small" href="/gst-database/{{ state.slug }}">View All {{ state.name }} Districts →</a>
+    </div>
+
+    <div class="grid g4">
+      {% for oc in other_cities %}
+      <a class="card" href="/gst-database/{{ oc.sslug }}/{{ oc.slug }}" style="padding:16px">
+        <b style="font-size:14px;color:var(--navy);display:block">{{ oc.name }}</b>
+        <small style="color:var(--muted)">{{ '{:,}'.format(oc.total_leads) }} leads · ₹{{ '{:,}'.format(oc.price) }} ›</small>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

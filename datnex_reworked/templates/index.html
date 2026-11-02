@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% block title %}datnex — India GST Business Database by State & District{% endblock %}
+{% block content %}
+<section class="hero-section"><div class="container hero-grid">
+ <div class="hero-copy"><span class="badge"><span class="badge-dot"></span> Verified GST Business Data Across India</span>
+  <h1>Find the right businesses.<br><span class="grad">36 States &amp; 780+ Districts.</span></h1>
+  <p class="sub">Explore comprehensive GST-registered business data across all 36 Indian States and Union Territories. Filter by state, pinpoint any of the 780+ districts, or get full nationwide coverage for high-converting B2B outreach.</p>
+  <div class="hero-actions">
+    <a class="btn primary" href="/gst-database">Explore 36 States &amp; Districts <span>→</span></a>
+    <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I want to inquire about GST database coverage for my state/district.') }}" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-2px;margin-right:4px;"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Support
+    </a>
+    <a class="btn" href="/free-sample"><span class="play-icon">↓</span> Free Sample</a>
+  </div>
+  <div class="hero-proof"><div class="proof-avatars"><span>36</span><span>780</span><span>GST</span></div><div><strong>Complete All-India Coverage</strong><small>36 States &amp; UTs • 780+ Districts • Direct WhatsApp Support</small></div></div>
+ </div>
+ <div class="hero-visual" aria-label="Illustration of a business database dashboard" role="img">
+  <div class="visual-orbit orbit-one"></div><div class="visual-orbit orbit-two"></div>
+  <div class="float-tag tag-top"><span class="tag-icon">✓</span><span><b>780+ Districts Loaded</b><small>District-level precision</small></span></div>
+  <div class="dashboard-card"><div class="dash-top"><div><span class="dash-eyebrow">GST BUSINESS DATABASE</span><h3>All-India Coverage</h3></div><span class="live-pill"><i></i> 36 States / UTs</span></div>
+   <div class="dash-metrics"><div><small>States &amp; UTs</small><b>{{ nstates }} <em>States</em></b></div><div><small>Districts &amp; Cities</small><b>{{ ncities }}<em>+</em></b></div></div>
+   <div class="map-panel"><div class="map-grid"></div><svg class="india-map" viewBox="0 0 500 550" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="mapfill" x1="60" y1="20" x2="440" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#76c9ff"/>
+      <stop offset="1" stop-color="#1769e0"/>
+    </linearGradient>
+    <filter id="mapshadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#1769e0" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <!-- Clean, Solid India Map Outline -->
+  <path d="M 168.4 525.6 L 164.8 525.6 L 159.4 522.0 L 150.9 511.7 L 151.8 510.8 L 146.4 501.0 L 147.3 495.6 L 141.9 484.8 L 141.1 479.4 L 136.6 469.6 L 124.0 450.8 L 121.3 434.6 L 117.7 429.2 L 116.8 422.1 L 109.7 412.2 L 109.7 409.5 L 102.5 397.8 L 101.6 389.8 L 98.0 379.9 L 97.1 368.3 L 93.5 357.5 L 94.4 355.7 L 92.6 353.0 L 93.5 350.3 L 91.7 348.5 L 92.6 342.3 L 89.9 330.6 L 93.5 324.3 L 93.5 315.4 L 89.9 310.9 L 90.8 304.6 L 88.1 302.8 L 89.0 300.1 L 86.8 297.0 L 85.5 300.1 L 86.4 307.3 L 80.5 314.9 L 75.1 315.8 L 66.2 321.2 L 59.9 321.2 L 45.6 309.5 L 31.7 293.8 L 33.0 289.8 L 39.3 291.6 L 48.2 288.9 L 55.9 281.3 L 42.0 287.1 L 33.0 283.5 L 27.2 278.6 L 27.2 275.0 L 20.0 270.5 L 21.8 266.0 L 24.9 262.9 L 27.6 262.9 L 31.2 258.4 L 42.9 257.5 L 48.2 260.2 L 56.3 255.7 L 60.8 258.4 L 63.9 256.2 L 64.8 251.7 L 58.6 240.0 L 58.6 236.4 L 54.5 236.9 L 48.7 229.3 L 50.5 221.2 L 43.8 219.9 L 39.7 215.8 L 39.7 213.1 L 48.7 202.4 L 52.7 193.8 L 57.2 192.1 L 62.6 197.4 L 65.3 197.4 L 69.8 194.7 L 76.0 194.7 L 77.4 193.4 L 85.5 180.8 L 94.0 175.0 L 98.9 169.2 L 100.7 160.2 L 103.8 157.1 L 109.7 154.8 L 108.8 151.3 L 119.5 139.6 L 118.6 133.3 L 119.5 125.3 L 121.3 122.6 L 132.1 117.2 L 129.8 114.9 L 123.6 114.9 L 120.9 109.6 L 116.4 109.6 L 105.2 101.9 L 101.6 75.0 L 111.5 66.1 L 111.5 64.3 L 106.1 60.7 L 105.6 56.7 L 100.3 55.8 L 96.7 51.3 L 90.4 52.2 L 87.3 49.0 L 87.3 43.7 L 97.6 32.4 L 102.0 30.7 L 105.6 31.5 L 105.2 29.3 L 107.4 27.1 L 114.6 28.9 L 121.8 24.4 L 133.4 26.2 L 136.1 30.7 L 140.6 31.5 L 145.5 38.3 L 144.6 44.6 L 147.8 47.7 L 151.4 46.8 L 160.3 54.0 L 172.9 54.9 L 186.3 45.9 L 197.1 45.9 L 203.4 52.2 L 207.9 54.9 L 210.5 54.0 L 212.8 56.2 L 213.7 58.0 L 209.2 72.3 L 200.2 79.5 L 200.2 82.2 L 197.1 86.2 L 191.3 87.6 L 193.1 89.4 L 191.3 95.7 L 197.5 99.2 L 201.1 111.8 L 190.8 117.6 L 187.2 116.7 L 184.5 112.3 L 183.2 116.3 L 187.7 120.8 L 189.0 132.9 L 192.6 132.0 L 199.8 140.0 L 204.3 139.2 L 212.3 148.1 L 216.8 149.0 L 223.5 153.9 L 223.5 155.7 L 213.7 163.8 L 211.9 170.1 L 212.8 171.9 L 209.2 179.1 L 212.3 182.2 L 215.9 181.3 L 234.8 194.7 L 238.3 193.8 L 241.9 197.4 L 248.2 198.3 L 250.9 201.9 L 256.3 203.7 L 259.9 201.9 L 267.9 202.8 L 270.6 201.0 L 276.0 204.6 L 278.7 204.6 L 280.9 206.9 L 280.9 209.5 L 288.6 214.5 L 293.9 212.7 L 297.5 217.2 L 305.6 217.2 L 311.0 219.9 L 316.4 218.1 L 320.8 221.6 L 323.5 219.9 L 331.2 220.3 L 332.9 216.7 L 329.4 210.4 L 330.3 200.6 L 332.0 198.8 L 331.2 195.2 L 341.5 190.3 L 346.4 195.2 L 345.5 201.5 L 348.2 206.9 L 345.5 209.5 L 349.5 213.6 L 354.9 213.6 L 357.6 215.4 L 363.9 215.4 L 367.5 212.7 L 371.9 214.5 L 382.7 214.5 L 384.5 212.7 L 390.8 213.6 L 393.9 212.2 L 393.9 206.0 L 387.6 204.2 L 386.7 199.7 L 388.1 198.3 L 401.5 195.6 L 414.1 181.3 L 422.2 180.4 L 433.8 169.6 L 441.0 172.3 L 446.4 172.3 L 457.1 166.9 L 466.5 178.2 L 466.5 181.7 L 463.9 184.4 L 469.7 186.7 L 473.3 185.8 L 477.8 188.5 L 480.0 194.3 L 471.9 202.4 L 476.4 209.5 L 475.1 211.8 L 470.6 210.9 L 467.0 207.3 L 462.5 208.2 L 450.9 217.2 L 444.1 220.3 L 445.0 228.4 L 443.2 233.8 L 436.1 240.9 L 438.8 247.2 L 427.5 268.3 L 420.4 265.6 L 417.2 266.9 L 417.2 280.4 L 412.7 283.1 L 414.5 293.8 L 408.7 299.7 L 404.2 299.7 L 402.0 297.4 L 400.2 284.9 L 397.5 280.4 L 397.1 271.0 L 395.3 271.0 L 394.8 274.1 L 392.1 275.9 L 392.1 280.4 L 389.9 282.6 L 387.2 282.6 L 381.4 279.5 L 378.7 270.5 L 383.6 261.1 L 386.3 261.1 L 388.1 258.4 L 391.7 258.4 L 393.9 256.2 L 398.0 246.8 L 394.4 245.0 L 387.2 246.8 L 383.6 245.0 L 363.0 245.0 L 357.2 240.9 L 357.6 229.7 L 353.1 231.5 L 347.7 227.0 L 340.6 224.3 L 334.7 229.3 L 334.3 231.5 L 344.2 236.9 L 348.2 241.8 L 345.9 245.0 L 340.6 245.0 L 336.1 250.3 L 333.8 250.8 L 333.8 252.6 L 343.7 258.9 L 344.6 264.2 L 341.9 269.6 L 347.3 276.8 L 346.4 280.4 L 348.2 284.0 L 348.2 292.0 L 350.0 294.7 L 350.0 302.8 L 343.3 306.8 L 337.9 305.0 L 335.2 305.9 L 332.5 300.6 L 328.9 304.1 L 317.3 308.6 L 315.9 310.0 L 316.8 320.7 L 305.6 333.7 L 291.2 339.1 L 288.6 338.2 L 289.0 340.5 L 282.7 345.8 L 270.6 361.5 L 265.2 363.3 L 254.5 374.1 L 243.3 381.7 L 241.9 388.4 L 233.9 392.9 L 227.6 392.9 L 225.3 398.7 L 220.4 402.8 L 215.0 401.0 L 210.1 405.0 L 208.3 413.1 L 211.0 423.0 L 209.2 427.4 L 212.8 443.6 L 211.0 452.5 L 205.6 459.7 L 203.8 466.0 L 205.6 488.4 L 195.8 491.1 L 191.3 502.8 L 196.6 505.4 L 179.2 510.4 L 176.9 519.8 L 168.4 525.6 Z"
+        fill="url(#mapfill)"
+        fill-opacity="0.95"
+        stroke="#ffffff"
+        stroke-width="2.2"
+        stroke-linejoin="round"
+        stroke-linecap="round"
+        filter="url(#mapshadow)" />
+
+  <!-- Sri Lanka -->
+  <path d="M 216.8 504.1 L 207.9 504.1 L 206.5 502.8 L 208.3 501.0 L 206.1 500.5 L 203.8 497.4 L 206.1 495.1 L 209.6 495.1 L 211.9 497.4 L 211.0 500.1 L 215.9 500.5 L 218.2 502.8 L 216.8 504.1 Z"
+        fill="url(#mapfill)"
+        fill-opacity="0.75"
+        stroke="#ffffff"
+        stroke-width="1.4"
+        stroke-linejoin="round" />
+
+  <!-- Major Hub Pulse Markers -->
+  <!-- New Delhi -->
+  <g class="map-marker" transform="translate(196, 172)">
+    <circle r="12" fill="#ffffff" fill-opacity="0.25">
+      <animate attributeName="r" values="6;14;6" dur="2.5s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4.5" fill="#ffffff" stroke="#1769e0" stroke-width="1.5"/>
+  </g>
+
+  <!-- Mumbai -->
+  <g class="map-marker" transform="translate(132, 310)">
+    <circle r="10" fill="#ffffff" fill-opacity="0.2">
+      <animate attributeName="r" values="5;12;5" dur="2.8s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.8s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4" fill="#ffffff" stroke="#1769e0" stroke-width="1.5"/>
+  </g>
+
+  <!-- Bengaluru -->
+  <g class="map-marker" transform="translate(190, 422)">
+    <circle r="10" fill="#ffffff" fill-opacity="0.2">
+      <animate attributeName="r" values="5;12;5" dur="2.6s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.2;0.7" dur="2.6s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4" fill="#ffffff" stroke="#1769e0" stroke-width="1.5"/>
+  </g>
+
+  <!-- Kolkata -->
+  <g class="map-marker" transform="translate(345, 275)">
+    <circle r="10" fill="#ffffff" fill-opacity="0.2">
+      <animate attributeName="r" values="5;12;5" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.7;0.2;0.7" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle r="4" fill="#ffffff" stroke="#1769e0" stroke-width="1.5"/>
+  </g>
+
+  <!-- Hyderabad -->
+  <g class="map-marker" transform="translate(215, 345)">
+    <circle r="3.5" fill="#ffffff" opacity="0.9"/>
+  </g>
+
+  <!-- Ahmedabad -->
+  <g class="map-marker" transform="translate(118, 260)">
+    <circle r="3.5" fill="#ffffff" opacity="0.9"/>
+  </g>
+</svg><div class="map-caption"><span><i></i> 36 States</span><span><i></i> 780+ Districts</span><span><i></i> Pan India</span></div></div>
+   <div class="dash-bottom"><div class="mini-bars"><i style="height:32%"></i><i style="height:50%"></i><i style="height:43%"></i><i style="height:69%"></i><i style="height:58%"></i><i style="height:83%"></i><i style="height:100%"></i><i style="height:76%"></i><i style="height:91%"></i><i style="height:64%"></i><i style="height:88%"></i><i style="height:100%"></i></div><div><b>Verified B2B Records</b><small>Updated GSTIN &amp; Contacts</small></div></div>
+  </div>
+  <div class="float-tag tag-bottom"><span class="tag-chart">↗</span><span><b>Instant WhatsApp Help</b><small>{{ whatsapp_display }}</small></span></div>
+ </div>
+</div><div class="container hero-stats"><div class="hero-stat"><b>{{ '{:,}'.format(total) }}<span>+</span></b><small>Verified GST Records</small></div><div class="hero-stat"><b>{{ nstates }}</b><small>States &amp; UTs Covered</small></div><div class="hero-stat"><b>{{ ncities }}<span>+</span></b><small>Districts Represented</small></div><div class="hero-stat"><b>100%</b><small>Instant Delivery &amp; CSV</small></div></div></section>
+
+<!-- LIVE STATE & DISTRICT SEARCH SECTION -->
+<section class="wrap" style="padding-top:20px;padding-bottom:10px">
+  <div class="card" style="border:2px solid #b7d7fb;box-shadow:0 14px 40px rgba(23,105,224,0.08);background:linear-gradient(180deg,#fff,#f8fbff);padding:32px 28px">
+    <div style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:16px;margin-bottom:18px">
+      <div>
+        <span class="eyebrow">Instant Geography Finder</span>
+        <h2 style="font-size:24px;margin-bottom:4px">Search Any State or District in India</h2>
+        <p class="sub" style="font-size:14px;margin-bottom:0">Type any Indian state or district name to view available records and jump straight to the package.</p>
+      </div>
+      <a class="btn wa-btn small" href="{{ whatsapp_url('Hi datnex, can you help me find GST business data for my location?') }}" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="vertical-align:-2px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Ask on WhatsApp
+      </a>
+    </div>
+    <div style="position:relative">
+      <input type="text" id="liveSearchInput" placeholder="🔍 Type a state or district (e.g. Pune, Lucknow, Surat, Jaipur, Patna, Ahmedabad, Gautam Buddha Nagar, Bengaluru, Indore...)" style="margin:0;padding:15px 18px;font-size:15px;border-radius:12px;border:2px solid #bcd8f9;width:100%;box-shadow:inset 0 2px 4px rgba(0,0,0,0.02)">
+    </div>
+    <div id="liveSearchResults" style="display:none;margin-top:16px;max-height:280px;overflow-y:auto;border:1px solid #d7e4f2;border-radius:12px;background:#fff;padding:8px"></div>
+    <div style="margin-top:14px;display:flex;align-items:center;flex-wrap:wrap;gap:6px">
+      <small style="color:var(--muted);font-weight:700;margin-right:6px">Quick shortcuts:</small>
+      <a href="/gst-database/maharashtra/mumbai" class="search-chip">Mumbai</a>
+      <a href="/gst-database/delhi/new-delhi" class="search-chip">New Delhi</a>
+      <a href="/gst-database/karnataka/bengaluru-urban" class="search-chip">Bengaluru</a>
+      <a href="/gst-database/gujarat/ahmedabad" class="search-chip">Ahmedabad</a>
+      <a href="/gst-database/maharashtra/pune" class="search-chip">Pune</a>
+      <a href="/gst-database/gujarat/surat" class="search-chip">Surat</a>
+      <a href="/gst-database/rajasthan/jaipur" class="search-chip">Jaipur</a>
+      <a href="/gst-database/uttar-pradesh/lucknow" class="search-chip">Lucknow</a>
+      <a href="/gst-database/telangana/hyderabad" class="search-chip">Hyderabad</a>
+      <a href="/gst-database/west-bengal/kolkata" class="search-chip">Kolkata</a>
+      <a href="/gst-database/tamil-nadu/chennai" class="search-chip">Chennai</a>
+      <a href="/gst-database/madhya-pradesh/indore" class="search-chip">Indore</a>
+      <a href="/gst-database/bihar/patna" class="search-chip">Patna</a>
+      <a href="/gst-database" class="search-chip" style="background:#eaf4ff;font-weight:750">+ View all 36 states</a>
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip"><div class="container trust-inner"><span>ALL-INDIA GST INTELLIGENCE FOR</span><div><b>Sales Teams</b><i></i><b>B2B Telecallers</b><i></i><b>WhatsApp Marketing</b><i></i><b>Vendor Sourcing</b><i></i><b>Manufacturers &amp; Traders</b></div></div></section>
+
+<section class="wrap" id="services"><div class="section-head"><span class="eyebrow">Explore Packages</span><h2>Business data that fits <span class="grad">your market</span></h2><p class="sub">Choose the exact level of geographical precision you need. From all-India coverage down to specific districts.</p></div>
+ <div class="grid g3 service-grid">
+  <article class="service-card reveal"><div class="service-top"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none"><path d="M4 20V8l8-4 8 4v12M8 20v-5h8v5M8 10h.01M12 10h.01M16 10h.01" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span><span class="service-number">01</span></div><h3>State-wise database</h3><p>Access full verified data for any of India's 36 States &amp; UTs, including all underlying district records.</p><a href="/gst-database" class="text-link">Browse 36 states <span>↗</span></a></article>
+  <article class="service-card reveal delay-1"><div class="service-top"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-6.1 7-12a7 7 0 1 0-14 0c0 5.9 7 12 7 12Z" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="9" r="2.4" stroke="currentColor" stroke-width="1.8"/></svg></span><span class="service-number">02</span></div><h3>District-wise database</h3><p>Hyper-target any of the 780+ districts across India for localized territory sales and city-specific outreach.</p><a href="/gst-districts" class="text-link">Explore 780+ districts <span>↗</span></a></article>
+  <article class="service-card reveal delay-2"><div class="service-top"><span class="icon-box"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" stroke="currentColor" stroke-width="1.6"/></svg></span><span class="service-number">03</span></div><h3>Pan-India database</h3><p>Complete nationwide database spanning all 36 States and 780+ Districts in one master download package.</p><a href="/checkout?ptype=pan_india" class="text-link">View pan-India package <span>↗</span></a></article>
+ </div>
+</section>
+
+<section class="soft-section" id="how-it-works"><div class="wrap"><div class="section-head"><span class="eyebrow">Seamless process</span><h2>From discovery to <span class="grad">instant download</span></h2><p class="sub">Three simple steps to select your territory and receive your CSV file.</p></div>
+ <div class="process-grid"><div class="process-line"></div>
+  <article class="process-step reveal"><span class="process-num">01</span><h3>Select State or District</h3><p>Pick from 36 States or 780+ Districts, or choose the complete India package.</p></article>
+  <article class="process-step reveal delay-1"><span class="process-num">02</span><h3>Review &amp; Pay via UPI</h3><p>Review fields, transparent pricing, scan the dynamic QR or pay via UPI ID.</p></article>
+  <article class="process-step reveal delay-2"><span class="process-num">03</span><h3>Verify &amp; WhatsApp Alert</h3><p>Submit UTR or send payment screenshot directly to our WhatsApp support.</p></article>
+  <article class="process-step reveal delay-3"><span class="process-num">04</span><h3>Download CSV</h3><p>Instant verified CSV file download ready to import into Excel, CRM, or dialer.</p></article>
+ </div>
+ </div></section>
+
+<section class="wrap" id="pricing"><div class="section-head"><span class="eyebrow">Transparent pricing</span><h2>Choose the coverage <span class="grad">you need</span></h2><p class="sub">One-time package pricing with no recurring subscriptions. Direct CSV export.</p></div>
+ <div class="grid g3 pricing-grid">
+  <article class="card price-card reveal"><span class="plan-label">DISTRICT PRECISION</span><h3>District-wise</h3><p>Target a single focused district or city.</p><div class="price">₹599 <s>₹5,999</s></div><span class="discount-note">90% OFF · Limited time</span><ul class="tick"><li>1 Selected District from 780+</li><li>Verified GST company &amp; owner details</li><li>Direct phone numbers &amp; addresses</li><li>Instant CSV download workflow</li><li>WhatsApp order assistance</li></ul><a class="btn" href="/gst-districts">Choose a district →</a></article>
+  <article class="card price-card featured reveal delay-1"><span class="plan-label">STATE-WIDE COVERAGE</span><h3>State-wise</h3><p>Complete coverage of any single Indian State.</p><div class="price">₹999 <s>₹9,999</s></div><span class="discount-note">90% OFF · Most popular</span><ul class="tick"><li>1 Selected State from 36 States/UTs</li><li>ALL districts within that state included</li><li>Complete GSTIN, emails &amp; phones</li><li>Instant CSV download workflow</li><li>WhatsApp verification support</li></ul><a class="btn primary" href="/gst-database">Choose a state →</a></article>
+  <article class="card price-card reveal delay-2"><span class="plan-label">NATIONWIDE ACCESS</span><h3>Pan-India</h3><p>Complete All-India master database.</p><div class="price">₹5,999 <s>₹59,999</s></div><span class="discount-note">90% OFF · Complete All-India package</span><ul class="tick"><li>All 36 States &amp; Union Territories</li><li>All 780+ Districts included</li><li>Comprehensive B2B data fields</li><li>Multi-download token access</li><li>Dedicated WhatsApp priority support</li></ul><a class="btn" href="/checkout?ptype=pan_india">Choose Pan-India →</a></article>
+ </div><p class="pricing-footnote">All packages include verified business names, GSTIN, registered addresses, phone numbers, and categories when available.</p>
+</section>
+
+<!-- COVERAGE SECTION: STATES & POPULAR DISTRICTS -->
+<section class="soft-section" id="coverage"><div class="wrap"><div class="section-head"><span class="eyebrow">Explore by geography</span><h2>Find business data by <span class="grad">State &amp; District</span></h2><p class="sub">Browse all 36 Indian States and high-demand commercial districts across the country.</p></div>
+ <div class="coverage-layout">
+  <div class="coverage-intro">
+    <div class="coverage-art">
+      <div class="coverage-ring ring-a"></div><div class="coverage-ring ring-b"></div>
+      <div class="coverage-pin pin-a">●</div><div class="coverage-pin pin-b">●</div><div class="coverage-pin pin-c">●</div>
+      <div class="coverage-card"><span class="coverage-card-icon">⌖</span><div><b>All 36 States &amp; UTs</b><small>780+ Districts Available</small></div></div>
+    </div>
+    <h3>Start with a state or district</h3>
+    <p>Select any state to view all its constituent districts, verified lead counts, and individual package options.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn primary" href="/gst-database">View all 36 states <span>→</span></a>
+      <a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, which states and districts have the best B2B lead counts?') }}" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="vertical-align:-2px;margin-right:3px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> WhatsApp Us
+      </a>
+    </div>
+  </div>
+  <div class="coverage-results">
+    <div class="coverage-heading"><h3>Top States by Records</h3><a href="/gst-database">View all 36 <span>↗</span></a></div>
+    <div class="location-list">
+      {% for s in states[:8] %}
+      <a class="location-row" href="/gst-database/{{ s.slug }}">
+        <span class="location-icon">⌖</span>
+        <span class="location-name">
+          <b>{{ s.name }}</b>
+          <small>{{ '{:,}'.format(s.total_leads) }} verified records</small>
+        </span>
+        <span class="location-arrow">↗</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% if cities %}
+    <div class="popular-cities" style="margin-top:22px;border-top:1px solid #edf2f7;padding-top:18px">
+      <b>Popular Districts &amp; Commercial Hubs</b>
+      <div class="city-pills" style="margin-top:10px">
+        {% for c in cities[:20] %}
+        <a class="pill" href="/gst-database/{{ c.sslug }}/{{ c.slug }}">
+          {{ c.name }} <small style="color:var(--muted);margin-left:4px">({{ '{:,}'.format(c.total_leads) }})</small>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+ </div>
+</div></section>
+
+<section class="wrap" id="included"><div class="split"><div><span class="eyebrow">Available data fields</span><h2>High-value business details, <span class="grad">organized clearly</span></h2><p class="sub">Every downloaded record includes standard corporate and contact fields formatted for seamless import into spreadsheets and CRM systems.</p><div style="display:flex;gap:12px;margin-top:20px"><a class="btn primary" href="/free-sample">Download Sample CSV <span>→</span></a><a class="btn wa-btn" href="{{ whatsapp_url('Hi, can you share a sample GST database CSV file on WhatsApp?') }}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="vertical-align:-2px;margin-right:4px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Get Sample on WhatsApp</a></div></div><div class="fields-grid">
+ {% for t,d in [('Company name','Registered legal business or trade name'),('Business address','Complete location details and registered address'),('State & District','Precision geographic classification across 36 states'),('GSTIN','15-digit valid GST identification number'),('Contact details','Primary phone numbers and business emails'),('Owner / Proprietor','Owner or director name when present in records')] %}
+ <div class="field-item reveal"><span class="field-check">✓</span><div><b>{{ t }}</b><small>{{ d }}</small></div></div>{% endfor %}
+ </div></div></section>
+
+<section class="soft-section" id="why-us"><div class="wrap"><div class="section-head"><span class="eyebrow">Why datnex</span><h2>Engineered for <span class="grad">results</span></h2><p class="sub">Trusted by hundreds of sales teams, agencies, and business development executives across India.</p></div><div class="grid g4 value-grid">
+ <article class="value-card reveal"><span class="value-icon">🇮🇳</span><h3>All 36 States &amp; UTs</h3><p>Unmatched coverage across every single Indian state and union territory.</p></article>
+ <article class="value-card reveal delay-1"><span class="value-icon">🏙️</span><h3>780+ Districts</h3><p>Choose granular district packages at just ₹599 for hyper-targeted sales.</p></article>
+ <article class="value-card reveal delay-2"><span class="value-icon">💬</span><h3>Direct WhatsApp &amp; Call</h3><p>Instant answers on WhatsApp ({{ whatsapp_display }}) or call our helpline ({{ call_display }}).</p></article>
+ <article class="value-card reveal delay-3"><span class="value-icon">⚡</span><h3>Instant CSV Download</h3><p>Clean CSV files ready to load directly into Microsoft Excel or Google Sheets.</p></article>
+ </div></div></section>
+
+<section class="wrap faq-preview"><div class="faq-preview-copy"><span class="eyebrow">Quick Help</span><h2>Got questions before ordering?</h2><p class="sub">Our support team is available directly on WhatsApp to answer questions regarding coverage, field completeness, and custom requirements.</p><div style="display:flex;gap:10px;margin-top:18px"><a class="btn primary" href="/faq">Visit FAQs <span>→</span></a><a class="btn wa-btn" href="{{ whatsapp_url('Hi datnex, I have a few questions before purchasing a database package.') }}" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="vertical-align:-2px;margin-right:4px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Chat on WhatsApp</a></div></div>
+<div class="faq-mini"><details><summary>Can I buy for just one specific district?</summary><p>Yes! Every one of India's 780+ districts is available as an individual package for only ₹599 (90% off).</p></details><details><summary>What is included in the state-wise package?</summary><p>The state-wise package (₹999) includes all business records for that entire state along with all of its constituent districts.</p></details><details><summary>How quickly do I get access after paying?</summary><p>Immediately after payment verification (usually 5-15 mins). You can also share your UTR screenshot on WhatsApp for instant unlock.</p></details></div></section>
+
+<!-- LIVE SEARCH JAVASCRIPT -->
+<script>
+(() => {
+  const input = document.getElementById('liveSearchInput');
+  const resultsBox = document.getElementById('liveSearchResults');
+  if (!input || !resultsBox) return;
+
+  let locationsData = null;
+  async function loadData() {
+    if (locationsData) return locationsData;
+    try {
+      const res = await fetch('/api/locations');
+      locationsData = await res.json();
+      return locationsData;
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  }
+
+  input.addEventListener('input', async (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    if (q.length < 2) {
+      resultsBox.style.display = 'none';
+      resultsBox.innerHTML = '';
+      return;
+    }
+
+    const data = await loadData();
+    if (!data) return;
+
+    const matchedStates = (data.states || []).filter(s => s.name.toLowerCase().includes(q)).slice(0, 5);
+    const matchedDistricts = (data.districts || []).filter(d => d.name.toLowerCase().includes(q) || (d.sname && d.sname.toLowerCase().includes(q))).slice(0, 15);
+
+    if (matchedStates.length === 0 && matchedDistricts.length === 0) {
+      resultsBox.innerHTML = '<div style="padding:14px;text-align:center;color:var(--muted);font-size:13px">No matching state or district found for "' + q + '". <a href="' + encodeURI('{{ whatsapp_url("Hi, I could not find data for: ") }}' + q) + '" target="_blank" style="color:var(--blue);font-weight:700">Inquire on WhatsApp →</a></div>';
+      resultsBox.style.display = 'block';
+      return;
+    }
+
+    let html = '';
+    if (matchedStates.length > 0) {
+      html += '<div style="padding:6px 12px;font-size:11px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase">States</div>';
+      matchedStates.forEach(s => {
+        html += `<a href="/gst-database/${s.slug}" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='transparent'">
+          <div><b style="color:var(--navy);font-size:13px">${s.name}</b> <span style="font-size:11px;color:var(--muted);margin-left:6px">State Package</span></div>
+          <div style="font-size:12px;color:var(--blue);font-weight:750">${(s.total_leads||0).toLocaleString('en-IN')} leads · ₹${s.price||999} →</div>
+        </a>`;
+      });
+    }
+
+    if (matchedDistricts.length > 0) {
+      html += '<div style="padding:8px 12px 6px;font-size:11px;font-weight:800;color:var(--blue);letter-spacing:1px;text-transform:uppercase;border-top:1px solid #eef2f7;margin-top:6px">Districts &amp; Cities</div>';
+      matchedDistricts.forEach(d => {
+        html += `<a href="/gst-database/${d.sslug}/${d.slug}" style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-radius:8px;text-decoration:none;transition:background .15s" onmouseover="this.style.background='#f0f7ff'" onmouseout="this.style.background='transparent'">
+          <div><b style="color:var(--navy);font-size:13px">${d.name}</b> <span style="font-size:11px;color:var(--muted);margin-left:6px">(${d.sname})</span></div>
+          <div style="font-size:12px;color:#12996b;font-weight:750">${(d.total_leads||0).toLocaleString('en-IN')} leads · ₹${d.price||599} →</div>
+        </a>`;
+      });
+    }
+
+    resultsBox.innerHTML = html;
+    resultsBox.style.display = 'block';
+  });
+
+  // Pre-load data on focus
+  input.addEventListener('focus', loadData);
+  document.addEventListener('click', (e) => {
+    if (!input.contains(e.target) && !resultsBox.contains(e.target)) {
+      resultsBox.style.display = 'none';
+    }
+  });
+})();
+</script>
+{% endblock %}

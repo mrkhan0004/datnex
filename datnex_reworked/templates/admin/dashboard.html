@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrap">
+  <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <h1>Admin <span class="grad">Dashboard</span></h1>
+    <div><a class="btn" href="/admin/logout">Logout</a></div>
+  </div>
+  <div style="display:flex;gap:14px;flex-wrap:wrap;margin:10px 0 30px">
+    <a class="btn primary" href="/admin/upload">⬆ Upload CSV</a>
+    <a class="btn" href="/admin/orders">📦 Orders</a>
+    <a class="btn" href="/admin/locations">📍 Locations &amp; Prices</a>
+    <a class="btn" href="/admin/blog">✍ Blog</a>
+    <a class="btn" href="/admin/settings" style="border-color:#1769e0;color:#1769e0;font-weight:750">⚙️ Settings (UPI, QR, WhatsApp)</a>
+  </div>
+  <div class="grid g4" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+    <div class="card"><small>Total Leads</small><div class="price">{{ '{:,}'.format(stats.leads) }}</div></div>
+    <div class="card"><small>Total Orders</small><div class="price">{{ stats.orders }}</div></div>
+    <div class="card"><small>Verified Revenue</small><div class="price">₹{{ '{:,}'.format(stats.revenue) }}</div></div>
+    <div class="card"><small>Pending Verifications</small><div class="price">{{ stats.pending }}</div></div>
+    <div class="card" style="border-left:4px solid #10b981;background:#f0fdf4"><small style="color:#059669;font-weight:700">🎁 Sample Requests</small><div class="price" style="color:#047857">{{ stats.samples }}</div></div>
+  </div>
+
+  {% if sample_leads %}
+  <div style="margin-top:40px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+      <h2 style="margin:0;font-size:20px">🎁 Recent Free Sample Leads</h2>
+      <div style="display:flex;align-items:center;gap:12px">
+        <small style="color:var(--muted)">Instant email alert dispatched directly to Admin on each enrollment</small>
+        <form method="POST" action="/admin/sample-requests/clear-all" onsubmit="return confirm('Pakka sare sample leads delete karne hain?')" style="margin:0">
+          <button type="submit" class="btn small" style="background:#fee2e2;color:#991b1b;border-color:#fca5a5;padding:4px 10px;font-size:11px">
+            🗑️ Clear Leads
+          </button>
+        </form>
+      </div>
+    </div>
+    <table style="width:100%">
+      <tr><th>ID</th><th>Mobile Number</th><th>Email Address</th><th>IP Address</th><th>Requested At</th><th>Action</th></tr>
+      {% for sl in sample_leads %}
+      <tr>
+        <td>#{{ sl.id }}</td>
+        <td><b style="color:#0f172a">📱 +91 {{ sl.phone }}</b></td>
+        <td>{{ sl.email }}</td>
+        <td><small style="color:#64748b;font-family:monospace">{{ sl.ip or '-' }}</small></td>
+        <td><small style="color:#64748b">{{ sl.created_at }}</small></td>
+        <td>
+          <a href="https://wa.me/91{{ sl.phone }}" target="_blank" rel="noopener noreferrer" class="btn small" style="background:#25d366;color:#fff;border:none;padding:4px 10px;font-size:11px">💬 WhatsApp</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+
+  <h2 style="margin-top:40px">Recent Orders</h2>
+  <table><tr><th>Order</th><th>Package</th><th>Amount</th><th>Status</th></tr>
+    {% for o in orders %}<tr><td>{{ o.order_id }}</td><td>{{ o.package_type }}</td>
+    <td>₹{{ o.amount }}</td><td><span class="status st-{{ o.status }}">{{ o.status }}</span></td></tr>
+    {% endfor %}</table>
+</div>
+{% endblock %}

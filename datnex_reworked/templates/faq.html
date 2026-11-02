@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Frequently Asked Questions — datnex{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:760px">
+  <div class="sec">
+    <span class="kicker">Frequently Asked Questions</span>
+    <h2>Everything You Need to Know</h2>
+    <p class="sub">Find answers about our coverage across all 36 States, 780+ Districts, CSV downloads, and WhatsApp support.</p>
+  </div>
+
+  <!-- WhatsApp Direct Help Card -->
+  <div class="card" style="background:#eafaf1;border:1px solid #b7ecd0;margin-bottom:24px;padding:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px">
+    <div>
+      <b style="font-size:16px;color:#137333;display:block">Have a question not listed here?</b>
+      <small style="color:#206e43">Chat directly with our support team on WhatsApp for instant assistance.</small>
+    </div>
+    <a class="btn wa-btn small" href="{{ whatsapp_url('Hi datnex, I have a few questions about your GST database packages.') }}" target="_blank" rel="noopener noreferrer">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16" style="vertical-align:-3px;margin-right:4px"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c2.2 0 4.26.86 5.82 2.41a8.17 8.17 0 0 1 2.41 5.83c0 4.54-3.7 8.24-8.24 8.24-1.44 0-2.85-.38-4.09-1.11l-.29-.17-3.05.8 1.15-3.04-.19-.31a8.15 8.15 0 0 1-1.25-4.41c0-4.54 3.7-8.24 8.24-8.24Z"/></svg> Chat on WhatsApp: {{ whatsapp_display }}
+    </a>
+  </div>
+
+  {% for q,a in [
+    ('How many states and districts are covered?', 'We cover all 36 Indian States and Union Territories, and all 780+ official districts across India. You can choose any individual district (₹599), an entire state (₹999), or the Pan-India master package (₹5,999 with 90% off, was ₹59,999).'),
+    ('Is this GST database updated for 2026?', 'Yes — data is regularly refreshed with newly registered and active GST businesses across all commercial zones.'),
+    ('What file format will I receive upon purchase?', 'You receive instant CSV downloads that open directly in Microsoft Excel, Google Sheets, or any CRM or dialer software.'),
+    ('Can I buy just one specific district?', 'Yes! Any of the 780+ districts can be selected and purchased individually for just ₹599.'),
+    ('What details are included in each record?', 'Each record includes Company Name, Registered Address, State, District/City, Category/Segment, Business Email, Phone Numbers, Owner/Proprietor Name, and 15-digit valid GSTIN.'),
+    ('How do I contact WhatsApp & Phone support?', 'You can click any WhatsApp button on our site or message us directly on WhatsApp at ' + whatsapp_display + ', or call our helpline at ' + call_display + ' for instant replies, sample requests, and order assistance.'),
+    ('How does payment verification work?', 'After scanning the UPI QR code or paying to our UPI ID, simply submit the 12-digit UTR on the payment page, or send the payment screenshot on WhatsApp for instant unlock within minutes.')
+  ] %}
+  <div class="card" style="margin-top:14px;padding:22px">
+    <h3 style="font-size:16px;color:var(--navy);margin-bottom:6px">{{ q }}</h3>
+    <p style="color:var(--muted);font-size:14px;line-height:1.7;margin:0">{{ a }}</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

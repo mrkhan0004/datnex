@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="wrap" style="max-width:760px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+    <div>
+      <h1 style="margin:4px 0 0">Upload <span class="grad">CSV</span></h1>
+      <p class="sub" style="margin:4px 0 0">CSV columns auto-detect hote hain (company_name, gstin, email, phone, owner_name, address, state, city/district, category...). Invalid GSTIN wali rows skip hoti hain. Duplicates auto-ignore.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn small" href="/admin">Dashboard</a>
+      <a class="btn small" href="/admin/orders">Orders</a>
+      <a class="btn small" href="/admin/locations">Locations</a>
+      <a class="btn small primary" href="/admin/upload">Upload CSV</a>
+      <a class="btn small" href="/admin/settings">⚙️ Settings</a>
+      <a class="btn small" href="/admin/logout">Logout</a>
+    </div>
+  </div>
+  <form method="POST" enctype="multipart/form-data" class="card" style="margin-top:24px">
+    <label>CSV File</label><input type="file" name="file" accept=".csv" required>
+
+    <label>Mode</label>
+    <select name="mode">
+      <option value="manual">Manual Assign (neeche se state/district/category choose karo)</option>
+      <option value="auto">Auto-Detect (CSV ke state/city/category columns se)</option>
+    </select>
+
+    <label>State (manual mode — all 36 States/UTs)</label>
+    <select name="state_id" id="uploadStateSel"><option value="">— None —</option>
+      {% for s in states %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}</select>
+
+    <label>District / City (manual mode — 780+ Districts)</label>
+    <select name="city_id" id="uploadCitySel"><option value="">— Select State First —</option></select>
+
+    <label>Category (manual mode)</label>
+    <input name="category" placeholder="e.g. Textile, Electronics">
+
+    <button class="btn primary" style="width:100%">Upload &amp; Store →</button>
+  </form>
+
+  <h2 style="margin-top:36px">Recent Uploads</h2>
+  <table><tr><th>File</th><th>Rows</th><th>Inserted</th><th>Skipped</th><th>Time</th></tr>
+    {% for l in logs %}<tr><td>{{ l.filename }}</td><td>{{ l.total_rows }}</td>
+    <td style="color:#4ade80">{{ l.inserted }}</td><td>{{ l.skipped }}</td>
+    <td>{{ l.uploaded_at }}</td></tr>{% endfor %}</table>
+</div>
+
+<script>
+const CITIES = {{ cities|tojson }};
+const uState = document.getElementById('uploadStateSel'), uCity = document.getElementById('uploadCitySel');
+if (uState && uCity) {
+  uState.addEventListener('change', () => {
+    uCity.innerHTML = '<option value="">— None / Select District —</option>';
+    const sid = uState.value;
+    if (sid) {
+      CITIES.filter(c => c.state_id == sid).forEach(c => {
+        uCity.append(new Option(c.name, c.id));
+      });
+    }
+  });
+}
+</script>
+{% endblock %}

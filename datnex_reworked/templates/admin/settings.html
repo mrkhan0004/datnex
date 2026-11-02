@@ -1,0 +1,384 @@
+{% extends 'base.html' %}
+{% block title %}Site Settings (UPI, QR, WhatsApp, Call) — datnex Admin{% endblock %}
+{% block content %}
+<div class="wrap" style="max-width:960px">
+  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+    <div>
+      <span class="kicker">Admin Configuration</span>
+      <h1 style="margin:4px 0 0">Site &amp; Contact <span class="grad">Settings</span></h1>
+      <p class="sub" style="margin:4px 0 0;font-size:14px">Manage your UPI ID, QR Code / Barcode, WhatsApp Support, and Calling Phone Number. Everything is individually configurable and reflects dynamically across the website.</p>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <a class="btn small" href="/admin">Dashboard</a>
+      <a class="btn small" href="/admin/orders">📦 Orders</a>
+      <a class="btn small" href="/admin/locations">📍 Locations</a>
+      <a class="btn small" href="/admin/upload">⬆ Upload CSV</a>
+      <a class="btn small primary" href="/admin/settings">⚙️ Settings</a>
+      <a class="btn small" href="/admin/logout">Logout</a>
+    </div>
+  </div>
+
+  <div class="grid g1" style="gap:28px">
+
+    <!-- 1. UPI ID CONFIGURATION (DIFF FUNCTION) -->
+    <div class="card" style="padding:28px;border:2px solid #cfe2ff;background:linear-gradient(180deg,#fff,#f8fbff);box-shadow:0 8px 30px rgba(23,105,224,0.06)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#eaf3ff;color:#1769e0;width:42px;height:42px">💳</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">1. UPI ID &amp; Payment Account</h2>
+          <small style="color:var(--muted)">Change your UPI ID and Beneficiary Name. Reflects on the Payment page and dynamic QR generation.</small>
+        </div>
+      </div>
+
+      <form method="POST" action="/admin/settings" style="margin-top:16px">
+        <input type="hidden" name="action" value="save_upi">
+        
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div>
+            <label style="font-weight:750;font-size:13px">UPI ID (VPA)</label>
+            <input type="text" name="upi_id" value="{{ settings.upi_id or '7648990004@rpl' }}"
+                   placeholder="e.g. 7648990004@rpl" required
+                   style="margin-bottom:8px;font-family:monospace;font-weight:700">
+            <small style="color:var(--muted);font-size:11px">Users will see this ID to pay via GPay, PhonePe, Paytm, or BHIM.</small>
+          </div>
+
+          <div>
+            <label style="font-weight:750;font-size:13px">Account Holder Name</label>
+            <input type="text" name="upi_name" value="{{ settings.upi_name or 'Mohan_Yadav' }}"
+                   placeholder="e.g. Mohan_Yadav" required
+                   style="margin-bottom:8px;font-weight:600">
+            <small style="color:var(--muted);font-size:11px">Beneficiary bank account name shown on the payment screen.</small>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #e2e8f0;padding-top:16px">
+          <div style="font-size:12px;color:#15803d;display:flex;align-items:center;gap:6px">
+            <span>✓ Current Active UPI:</span>
+            <b style="font-family:monospace;font-size:13px">{{ settings.upi_id or '7648990004@rpl' }}</b>
+          </div>
+          <button type="submit" class="btn primary" style="padding:10px 22px;font-size:13px">💾 Save UPI ID</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 2. QR CODE / BAR CODE CONFIGURATION (DIFF FUNCTION) -->
+    <div class="card" style="padding:28px;border:2px solid #e2e8f0;background:#fff;box-shadow:0 8px 30px rgba(11,37,69,0.05)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#f3e8ff;color:#9333ea;width:42px;height:42px">📱</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">2. QR Code &amp; Barcode Mode</h2>
+          <small style="color:var(--muted)">Use auto-generated dynamic UPI QR or upload your own custom QR Code / Barcode image.</small>
+        </div>
+      </div>
+
+      <form method="POST" action="/admin/settings" enctype="multipart/form-data" style="margin-top:16px">
+        <input type="hidden" name="action" value="save_qr">
+
+        <div style="display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:start">
+          <div>
+            <label style="font-weight:750;font-size:13px;display:block;margin-bottom:8px">Select QR Code Source:</label>
+            
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px">
+              <label style="display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid {% if settings.qr_mode != 'custom' %}#3b82f6{% else %}#e2e8f0{% endif %};border-radius:10px;background:{% if settings.qr_mode != 'custom' %}#eff6ff{% else %}#fff{% endif %};cursor:pointer">
+                <input type="radio" name="qr_mode" value="dynamic" {% if settings.qr_mode != 'custom' %}checked{% endif %} style="width:auto;margin:0" onchange="toggleCustomQrUpload(false)">
+                <div>
+                  <b style="font-size:13px">Auto-Generated Dynamic QR (Recommended)</b>
+                  <small style="display:block;color:var(--muted);font-size:11px">Generates precise UPI QR code dynamically for each order with order ID, amount, and active UPI ID.</small>
+                </div>
+              </label>
+
+              <label style="display:flex;align-items:center;gap:10px;padding:12px;border:1.5px solid {% if settings.qr_mode == 'custom' %}#3b82f6{% else %}#e2e8f0{% endif %};border-radius:10px;background:{% if settings.qr_mode == 'custom' %}#eff6ff{% else %}#fff{% endif %};cursor:pointer">
+                <input type="radio" name="qr_mode" value="custom" {% if settings.qr_mode == 'custom' %}checked{% endif %} style="width:auto;margin:0" onchange="toggleCustomQrUpload(true)">
+                <div>
+                  <b style="font-size:13px">Custom QR Code / Barcode Image</b>
+                  <small style="display:block;color:var(--muted);font-size:11px">Upload your own static QR Code / Barcode image file (e.g., from PhonePe, GPay, Paytm business standee).</small>
+                </div>
+              </label>
+            </div>
+
+            <!-- Custom QR Upload Field -->
+            <div id="customQrUploadWrap" style="border:1px dashed #cbd5e1;padding:16px;border-radius:12px;background:#f8fafc;{% if settings.qr_mode != 'custom' %}display:none{% endif %}">
+              <label style="font-weight:750;font-size:13px">Upload New QR Code Image (PNG, JPG, WebP)</label>
+              <input type="file" name="qr_image" accept="image/png,image/jpeg,image/webp" style="margin-bottom:8px">
+              <small style="color:var(--muted);font-size:11px;display:block">Max size: 5MB. Clear square aspect ratio recommended.</small>
+            </div>
+          </div>
+
+          <!-- Live QR Code Preview Box -->
+          <div style="text-align:center;border:1px solid #e2e8f0;border-radius:14px;padding:16px;background:#f8fafc">
+            <span style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:8px">Current QR Code in Use</span>
+            <div style="background:#fff;padding:12px;border-radius:10px;display:inline-block;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,0.04)">
+              {% if settings.qr_mode == 'custom' and settings.custom_qr_file %}
+              <img src="/static/qr/{{ settings.custom_qr_file }}" alt="Custom QR Preview" style="width:160px;height:160px;object-fit:contain;display:block">
+              <span class="badge" style="font-size:9px;padding:3px 8px;margin-top:8px;background:#f3e8ff;color:#7e22ce">Custom Uploaded QR</span>
+              {% else %}
+              <img src="/admin/settings/preview-qr" alt="Dynamic QR Preview" style="width:160px;height:160px;object-fit:contain;display:block">
+              <span class="badge" style="font-size:9px;padding:3px 8px;margin-top:8px;background:#dcfce7;color:#15803d">Dynamic Auto QR</span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:flex-end;gap:12px;border-top:1px solid #e2e8f0;padding-top:16px">
+          {% if settings.custom_qr_file %}
+          <button type="submit" name="reset_qr" value="1" class="btn small" style="color:#b91c1c;border-color:#fecaca;background:#fef2f2">Reset to Dynamic QR</button>
+          {% endif %}
+          <button type="submit" class="btn primary" style="padding:10px 22px;font-size:13px">💾 Save QR Settings</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 3. WHATSAPP SUPPORT SETTINGS (REDIRECT NUMBER & SCREEN DISPLAY ALAG-ALAG) -->
+    <div class="card" style="padding:28px;border:2px solid #bbf7d0;background:linear-gradient(180deg,#fff,#f7fdf9);box-shadow:0 8px 30px rgba(37,211,102,0.06)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#dcfce7;color:#16a34a;width:42px;height:42px">💬</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">3. WhatsApp Support Settings (Redirect Number &amp; Screen Display)</h2>
+          <small style="color:var(--muted)">Manage your WhatsApp chat redirect destination and the text/number shown on screen independently.</small>
+        </div>
+      </div>
+
+      <form method="POST" action="/admin/settings" style="margin-top:16px">
+        <input type="hidden" name="action" value="save_whatsapp">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#fff;border:1px solid #ccebd7;padding:16px;border-radius:12px">
+            <span class="badge" style="background:#eafaf1;color:#15803d;margin-bottom:8px;font-size:10px">🔗 REDIRECT LINK NUMBER</span>
+            <label style="font-weight:750;font-size:13px;display:block">WhatsApp Chat Redirect Number (wa.me Link)</label>
+            <input type="text" name="whatsapp_number" value="{{ settings.whatsapp_number or '918770636546' }}"
+                   placeholder="e.g. 918770636546" required
+                   style="margin-bottom:6px;font-weight:700;font-family:monospace">
+            <small style="color:#0f5132;font-size:11px;display:block;line-height:1.4">
+              Yeh number <b>wa.me/&lt;number&gt;</b> redirect me use hoga jaha buyer ki WhatsApp chat open hogi (digits only, country code ke saath e.g. 918770636546).
+            </small>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ccebd7;padding:16px;border-radius:12px">
+            <span class="badge" style="background:#f0fdf4;color:#166534;margin-bottom:8px;font-size:10px">🖥️ SCREEN DISPLAY TEXT</span>
+            <label style="font-weight:750;font-size:13px;display:block">WhatsApp Screen Display Text / Number</label>
+            <input type="text" name="whatsapp_display" value="{{ settings.whatsapp_display or '+91 87706 36546' }}"
+                   placeholder="e.g. +91 87706 36546" required
+                   style="margin-bottom:6px;font-weight:700">
+            <small style="color:#0f5132;font-size:11px;display:block;line-height:1.4">
+              Yeh text/number website ki screen par WhatsApp button, announcement, footer aur tooltips par dikhega.
+            </small>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <label style="font-weight:750;font-size:13px">Default WhatsApp Inquiry Message</label>
+          <input type="text" name="whatsapp_default_msg" value="{{ settings.whatsapp_default_msg or 'Hello datnex, I am interested in GST Business Database packages.' }}"
+                 placeholder="e.g. Hello datnex, I am interested in GST Business Database packages." required
+                 style="margin-bottom:8px">
+          <small style="color:var(--muted);font-size:11px">Jab buyer WhatsApp icon click karega toh yeh message prefilled rahega.</small>
+        </div>
+
+        <div style="margin-top:16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:12px 16px;font-size:12px;color:#166534">
+          <b>Where WhatsApp reflects:</b>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">
+            <span>• Floating WhatsApp button</span>
+            <span>• Header WhatsApp action button</span>
+            <span>• Top announcement banner</span>
+            <span>• Footer contact column</span>
+            <span>• Payment &amp; UTR verification page</span>
+            <span>• Order status resolution page</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #e2e8f0;padding-top:16px">
+          <a href="{{ whatsapp_url() }}" target="_blank" rel="noopener noreferrer" class="btn wa-btn small" style="font-size:12px">
+            💬 Test Current WhatsApp Redirect Link ↗
+          </a>
+          <button type="submit" class="btn primary" style="padding:10px 22px;font-size:13px">💾 Save WhatsApp Settings</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 4. CALLING PHONE NUMBER SETTINGS (DIFF FUNCTION - ALAG NUMBER) -->
+    <div class="card" style="padding:28px;border:2px solid #fed7aa;background:linear-gradient(180deg,#fff,#fffbf5);box-shadow:0 8px 30px rgba(234,88,12,0.06)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#ffedd5;color:#ea580c;width:42px;height:42px">📞</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">4. Calling Phone Number (Direct Calling &amp; Screen Display)</h2>
+          <small style="color:var(--muted)">Separate calling phone number for direct phone calls (tel: link) and customer care call display on the website.</small>
+        </div>
+      </div>
+
+      <form method="POST" action="/admin/settings" style="margin-top:16px">
+        <input type="hidden" name="action" value="save_call">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+          <div style="background:#fff;border:1px solid #fed7aa;padding:16px;border-radius:12px">
+            <span class="badge" style="background:#ffedd5;color:#c2410c;margin-bottom:8px;font-size:10px">📱 DIRECT CALL NUMBER</span>
+            <label style="font-weight:750;font-size:13px;display:block">Calling Phone Number (tel: Dialer)</label>
+            <input type="text" name="call_number" value="{{ settings.call_number or '+917648990004' }}"
+                   placeholder="e.g. +917648990004" required
+                   style="margin-bottom:6px;font-weight:700;font-family:monospace">
+            <small style="color:#9a3412;font-size:11px;display:block;line-height:1.4">
+              Yeh number mobile dialer me <b>tel:&lt;number&gt;</b> ke through call karne ke liye use hota hai.
+            </small>
+          </div>
+
+          <div style="background:#fff;border:1px solid #fed7aa;padding:16px;border-radius:12px">
+            <span class="badge" style="background:#fff7ed;color:#c2410c;margin-bottom:8px;font-size:10px">🖥️ SCREEN CALL DISPLAY</span>
+            <label style="font-weight:750;font-size:13px;display:block">Calling Number Screen Display Text</label>
+            <input type="text" name="call_display" value="{{ settings.call_display or '+91 76489 90004' }}"
+                   placeholder="e.g. +91 76489 90004" required
+                   style="margin-bottom:6px;font-weight:700">
+            <small style="color:#9a3412;font-size:11px;display:block;line-height:1.4">
+              Yeh phone number website ki screen par Footer, Announcement bar aur Contact information me show hota hai.
+            </small>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:12px 16px;font-size:12px;color:#9a3412">
+          <b>Where Calling Number reflects:</b>
+          <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:6px">
+            <span>• Top announcement banner (Call link)</span>
+            <span>• Footer contact column (Direct phone call)</span>
+            <span>• Support &amp; FAQ helpline contact</span>
+          </div>
+        </div>
+
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #fed7aa;padding-top:16px">
+          <a href="tel:{{ call_number }}" class="btn small" style="font-size:12px;background:#fff7ed;color:#c2410c;border-color:#fed7aa">
+            📞 Test Call Link (tel:{{ call_number }})
+          </a>
+          <button type="submit" class="btn primary" style="padding:10px 22px;font-size:13px;background:linear-gradient(115deg,#ea580c,#f97316)">💾 Save Calling Number</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 5. FREE SAMPLE LEAD EMAIL & SMTP SETTINGS -->
+    <div class="card" style="padding:28px;border:2px solid #e0e7ff;background:linear-gradient(180deg,#fff,#f5f7ff);box-shadow:0 8px 30px rgba(99,102,241,0.06)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#eef2ff;color:#4f46e5;width:42px;height:42px">📧</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">5. Free Sample Lead Notifications &amp; SMTP</h2>
+          <small style="color:var(--muted)">Direct email alert triggered immediately whenever a visitor enrolls for a Free Sample.</small>
+        </div>
+      </div>
+
+      <div style="background:#eef2ff;border:1px solid #c7d2fe;border-radius:10px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:#3730a3">
+        <b>📬 Destination Email:</b>
+        <span style="font-family:monospace;font-weight:700;font-size:14px;background:#fff;padding:2px 8px;border-radius:6px;margin-left:6px;border:1px solid #c7d2fe">zuberbaig09876@gmail.com</span>
+        <div style="margin-top:6px;font-size:12px;color:#4338ca">
+          🔒 <i>This notification email is strictly backend-only and is completely hidden from public website visitors.</i>
+        </div>
+      </div>
+
+      <form method="POST" action="/admin/settings">
+        <input type="hidden" name="action" value="save_smtp">
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div>
+            <label style="font-weight:750;font-size:13px">SMTP Host / Server</label>
+            <input type="text" name="smtp_host" value="{{ settings.smtp_host or 'smtp.gmail.com' }}"
+                   placeholder="smtp.gmail.com"
+                   style="margin-bottom:4px;font-family:monospace;font-size:13px">
+            <small style="color:var(--muted);font-size:11px">Default: smtp.gmail.com</small>
+          </div>
+          <div>
+            <label style="font-weight:750;font-size:13px">SMTP Port</label>
+            <input type="number" name="smtp_port" value="{{ settings.smtp_port or '587' }}"
+                   placeholder="587"
+                   style="margin-bottom:4px;font-family:monospace;font-size:13px">
+            <small style="color:var(--muted);font-size:11px">587 for TLS, 465 for SSL</small>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div>
+            <label style="font-weight:750;font-size:13px">Sender Gmail / Username</label>
+            <input type="email" name="smtp_user" value="{{ settings.smtp_user or '' }}"
+                   placeholder="your-email@gmail.com"
+                   style="margin-bottom:4px;font-size:13px">
+            <small style="color:var(--muted);font-size:11px">Your Gmail address used to dispatch notifications.</small>
+          </div>
+          <div>
+            <label style="font-weight:750;font-size:13px">Gmail App Password (16-digits)</label>
+            <input type="password" name="smtp_pass" value="{{ settings.smtp_pass or '' }}"
+                   placeholder="••••••••••••••••"
+                   style="margin-bottom:4px;font-family:monospace;font-size:13px">
+            <small style="color:var(--muted);font-size:11px">Google Account &gt; Security &gt; 2-Step &gt; App Passwords</small>
+          </div>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <label style="font-weight:750;font-size:13px">From Display Email (Optional)</label>
+          <input type="text" name="smtp_from" value="{{ settings.smtp_from or '' }}"
+                 placeholder="datnex Leads &lt;leads@datnex.in&gt;"
+                 style="margin-bottom:4px;font-size:13px">
+        </div>
+
+        <div style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid #e0e7ff;padding-top:16px">
+          <button type="submit" name="send_test" value="1" class="btn small" style="font-size:12px;background:#eef2ff;color:#4f46e5;border-color:#c7d2fe">
+            ✉️ Send Test Notification to Admin
+          </button>
+          <button type="submit" class="btn primary" style="padding:10px 22px;font-size:13px;background:linear-gradient(115deg,#4f46e5,#6366f1)">💾 Save SMTP Settings</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 6. DATA CLEANUP & TEST RESET TOOLS -->
+    <div class="card" style="padding:28px;border:2px solid #fee2e2;background:linear-gradient(180deg,#fff,#fef2f2);box-shadow:0 8px 30px rgba(220,38,38,0.05)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+        <span class="icon-box" style="margin-bottom:0;background:#fee2e2;color:#dc2626;width:42px;height:42px">🧹</span>
+        <div>
+          <h2 style="font-size:20px;margin:0;color:var(--navy)">6. Database &amp; Test Lead Cleanup</h2>
+          <small style="color:var(--muted)">1-click tools to wipe test orders, sample leads, or database records whenever needed.</small>
+        </div>
+      </div>
+
+      <div class="grid g3" style="gap:16px;margin-top:18px">
+        <!-- Clear Orders -->
+        <div style="background:#fff;border:1px solid #fecaca;padding:18px;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <b style="font-size:14px;color:#991b1b;display:block">📦 Test Orders &amp; Buyer Leads</b>
+            <p style="font-size:12px;color:#64748b;margin:6px 0 16px">Clears all submitted test orders, buyer phone numbers, UTRs, and resets order counters.</p>
+          </div>
+          <form method="POST" action="/admin/orders/clear-all" onsubmit="return confirm('Pakka sare test orders delete karne hain?')" style="margin:0">
+            <button type="submit" class="btn small" style="width:100%;background:#fee2e2;color:#991b1b;border-color:#fca5a5;font-size:12px">
+              🗑️ Clear All Orders
+            </button>
+          </form>
+        </div>
+
+        <!-- Clear Sample Requests -->
+        <div style="background:#fff;border:1px solid #fecaca;padding:18px;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <b style="font-size:14px;color:#991b1b;display:block">🎁 Free Sample Leads</b>
+            <p style="font-size:12px;color:#64748b;margin:6px 0 16px">Clears all free sample application records (emails &amp; phone numbers) submitted on the website.</p>
+          </div>
+          <form method="POST" action="/admin/sample-requests/clear-all" onsubmit="return confirm('Pakka sare sample requests delete karne hain?')" style="margin:0">
+            <button type="submit" class="btn small" style="width:100%;background:#fee2e2;color:#991b1b;border-color:#fca5a5;font-size:12px">
+              🗑️ Clear Sample Leads
+            </button>
+          </form>
+        </div>
+
+        <!-- Clear Uploaded Leads -->
+        <div style="background:#fff;border:1px solid #fecaca;padding:18px;border-radius:12px;display:flex;flex-direction:column;justify-content:space-between">
+          <div>
+            <b style="font-size:14px;color:#991b1b;display:block">📑 Uploaded GST Records</b>
+            <p style="font-size:12px;color:#64748b;margin:6px 0 16px">Clears all records inside the imported leads table so you can upload fresh clean CSV files.</p>
+          </div>
+          <form method="POST" action="/admin/leads/clear-all" onsubmit="return confirm('WARNING: Pakka sara uploaded leads data clear karna hai?')" style="margin:0">
+            <button type="submit" class="btn small" style="width:100%;background:#fee2e2;color:#991b1b;border-color:#fca5a5;font-size:12px">
+              🗑️ Clear Uploaded Leads
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function toggleCustomQrUpload(show) {
+  const box = document.getElementById('customQrUploadWrap');
+  if (box) box.style.display = show ? 'block' : 'none';
+}
+</script>
+{% endblock %}
