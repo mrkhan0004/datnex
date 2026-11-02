@@ -1237,4 +1237,5 @@ def admin_preview_qr():
 
 init_db()
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port, debug=False)
